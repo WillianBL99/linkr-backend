@@ -20,6 +20,15 @@ async function getUserName(name) {
     );
 }
 
+async function checkNameEmail(name, email) {
+    return db.query (`
+        SELECT * 
+        FROM users 
+        WHERE name = $1 OR email = $2`,
+        [name, email]
+    );
+}
+
 async function createUser(name, email, password, imgUrl) {
     const key = 10;
     const passwordHash = bcrypt.hashSync(password, key);
@@ -34,7 +43,8 @@ async function createUser(name, email, password, imgUrl) {
 const userRepostory = {
     createUser,
     getUserEmail,
-    getUserName
+    getUserName,
+    checkNameEmail
 }
 
 export default userRepostory;

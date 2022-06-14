@@ -1,7 +1,7 @@
 CREATE TABLE "users" (
 	"id" serial NOT NULL PRIMARY KEY,
-	"name" TEXT NOT NULL,
-	"password" TEXT NOT NULL UNIQUE,
+	"name" TEXT NOT NULL UNIQUE,
+	"password" TEXT NOT NULL,
 	"email" TEXT NOT NULL UNIQUE,
 	"image" TEXT,
 	"createdAt" timestamp NOT NULL DEFAULT NOW()
