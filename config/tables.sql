@@ -23,15 +23,7 @@ CREATE TABLE "hashtags" (
 ); 
 
 
-<<<<<<< HEAD
 CREATE TABLE "hashtagsPosts" (
-=======
-<<<<<<< HEAD
-CREATE TABLE "hashtagsPosts" (
-=======
-CREATE TABLE "hashtagPosts" (
->>>>>>> 213687220ab0468c9bdf21fa51d7f81d876aa414
->>>>>>> 3b18280797f1966b3c24d42be31b91b5b0a090f0
 	"id" serial NOT NULL PRIMARY KEY,
 	"hashtagId" integer NOT NULL REFERENCES hashtags(id),
 	"postId" integer NOT NULL REFERENCES posts(id)
