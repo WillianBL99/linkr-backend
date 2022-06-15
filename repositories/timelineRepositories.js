@@ -6,6 +6,7 @@ export async function getTimelineRepository() {
     FROM users u
     JOIN posts p ON u.id = p."userId"
     ORDER BY p."createdAt" DESC
+    LIMIT 20
   `);
   return timeline.rows;
 }
