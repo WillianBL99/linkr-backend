@@ -11,7 +11,7 @@ CREATE TABLE "users" (
 CREATE TABLE "posts" (
 	"id" serial NOT NULL PRIMARY KEY,
 	"userId" integer NOT NULL REFERENCES users(id),
-	"bodyPost" TEXT NOT NULL,
+	"postBody" TEXT NOT NULL,
 	"link" TEXT NOT NULL,
 	"createdAt" timestamp NOT NULL DEFAULT NOW()
 );
