@@ -1,6 +1,46 @@
-import db from "./../config/db.js";
+import bcrypt from "bcrypt";
 
-export async function getPostsByUser(id){
+import db from "../config/db.js";
+
+async function getUserEmail(email) {
+    return db.query (`
+        SELECT * 
+        FROM users 
+        WHERE email = $1`,
+        [email]
+    );
+}
+
+async function getUserName(name) {
+    return db.query (`
+        SELECT * 
+        FROM users 
+        WHERE name = $1`,
+        [name]
+    );
+}
+
+async function checkNameEmail(name, email) {
+    return db.query (`
+        SELECT * 
+        FROM users 
+        WHERE name = $1 OR email = $2`,
+        [name, email]
+    );
+}
+
+async function createUser(name, email, password, imgUrl) {
+    const key = 10;
+    const passwordHash = bcrypt.hashSync(password, key);
+    return db.query (`
+        INSERT
+        INTO users (name, password, email, image)
+        VALUES ($1, $2, $3, $4)`,
+        [name, passwordHash, email, imgUrl]
+    );
+}
+
+export async function getUserPosts(id){
     const posts = await db.query(
         `SELECT "postBody", link, id FROM posts
         WHERE "userId" = $1
@@ -29,3 +69,15 @@ export async function getUsersByName(filter){
 
     return users.rows;
 }
+
+const userRepostory = {
+    createUser,
+    getUserEmail,
+    getUserName,
+    checkNameEmail,
+    getUserById,
+    getUsersByName,
+    getUserPosts
+}
+
+export default userRepostory;

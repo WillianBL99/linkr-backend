@@ -1,10 +1,10 @@
-import {getPostsByUser, getUserById, getUsersByName} from "./../repositories/userRepositories.js";
+import userRepository from "./../repositories/userRepositories.js";
 
 export async function getUserPosts(req, res) {
     const { id } = req.params;
 
     try {
-        let user = await getUserById(id);
+        let user = await userRepository.getUserById(id);
         
         if (user.length === 0) {
             res.sendStatus(404);
@@ -13,7 +13,7 @@ export async function getUserPosts(req, res) {
 
         user = user[0];
 
-        const userPosts = await getPostsByUser(id);
+        const userPosts = await userRepository.getUserPosts(id);
 
         user.posts = userPosts;
 
@@ -30,7 +30,7 @@ export async function getUsers(req, res) {
     const filter = name + "%";
 
     try {
-        const users = await getUsersByName(filter);
+        const users = await userRepository.getUsersByName(filter);
         res.status(200).send(users);
     } catch (error) {
         console.log(error);
