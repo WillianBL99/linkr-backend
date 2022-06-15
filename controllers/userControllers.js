@@ -10,7 +10,7 @@ export async function getUserPosts(req, res) {
             [id]
         );
 
-        if(userResult.rows.length === 0){
+        if (userResult.rows.length === 0) {
             res.sendStatus(404);
             return;
         }
@@ -25,12 +25,32 @@ export async function getUserPosts(req, res) {
         );
 
         const userPosts = userPostsResult.rows;
-        
+
         user.posts = userPosts;
 
         res.status(200).send(user);
     } catch (e) {
         console.log(e);
+        res.sendStatus(500);
+    }
+}
+
+export async function getUsers(req, res) {
+    const { name } = req.params;
+
+    const filter = name + "%";
+
+    try {
+        const usersResult = await db.query(
+            `SELECT name, id, image FROM users
+            WHERE name ILIKE $1`,
+            [filter]
+        );
+
+        const users = usersResult.rows;
+        res.status(200).send(users);
+    } catch (error) {
+        console.log(error);
         res.sendStatus(500);
     }
 }
