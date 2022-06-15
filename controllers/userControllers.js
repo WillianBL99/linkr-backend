@@ -31,6 +31,10 @@ export async function getUsers(req, res) {
 
     try {
         const users = await userRepository.getUsersByName(filter);
+        if(users.length === 0){
+            res.sendStatus(404);
+            return;
+        }
         res.status(200).send(users);
     } catch (error) {
         console.log(error);
