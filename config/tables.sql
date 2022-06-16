@@ -7,6 +7,13 @@ CREATE TABLE "users" (
 	"createdAt" timestamp NOT NULL DEFAULT NOW()
 ); 
 
+CREATE TABLE "sessions" (
+	"id" SERIAL PRIMARY KEY,
+    "userId" INTEGER NOT NULL REFERENCES "users"("id"), 
+	"token" TEXT UNIQUE NOT NULL,
+	"createdAt" TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
 
 CREATE TABLE "posts" (
 	"id" serial NOT NULL PRIMARY KEY,
