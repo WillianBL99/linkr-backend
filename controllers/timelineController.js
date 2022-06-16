@@ -22,3 +22,15 @@ export async function getTimeline(req, res) {
     res.sendStatus(500);    
   }
 }
+
+
+export async function postOnTimeline(req, res) {
+  try {
+    await createPost(req.body);
+    res.sendStatus(200);
+
+  } catch (e) {
+    console.log("Error in postOnTimeline", e);
+    res.sendStatus(500);    
+  }
+}
