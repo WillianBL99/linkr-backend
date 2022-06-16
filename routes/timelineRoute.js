@@ -4,6 +4,7 @@ import { getTimelineMiddleware } from "../middlewares/timelineMiddleware.js";
 import { validateSchema } from "../middlewares/schemaValidator.js";
 import { createPostSchema } from "../schemas/timelineSchemas.js";
 
+
 const timelineRouter = Router();
 
 timelineRouter.get("/timeline",getTimelineMiddleware, getTimeline);
