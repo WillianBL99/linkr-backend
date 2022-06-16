@@ -6,6 +6,7 @@ export default async function getMetadataUrl(url) {
     return {title, description, image};
 
   } catch (e) {
+    console.log(e);
     return undefined;
   }
 }
