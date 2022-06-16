@@ -26,7 +26,25 @@ export async function getTimeline(req, res) {
 
 export async function postOnTimeline(req, res) {
   try {
-    await createPost(req.body);
+    const { hashtags } = req.body;
+
+    const { id:postId } = await postOnTimelineRepository( res.locals.userId, req.body );
+    const valuesToHashtagPost = "";
+
+    for(let i = 0; i < hashtags.length; i++) {
+      let {id} = await getHashtagByName(hashtags[i]);
+      
+      valuesToHashtagPost += `(${postId}, ${id || await createHashtag(hashtags[i])})`;
+      if(i !== hashtags.length - 1) {
+        valuesToHashtagPost += ",";
+      }
+    }
+
+    await db.query(`
+      INSERT INTO hashtags_posts (post_id, hashtag_id)
+      VALUES ${valuesToHashtagPost}
+    `);
+
     res.sendStatus(200);
 
   } catch (e) {

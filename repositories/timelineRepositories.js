@@ -11,8 +11,8 @@ export async function getTimelineRepository() {
   return timeline.rows;
 }
 
-export async function postOnTimelineRepository(post) {
-  const { userId, postBody, link } = post;
+export async function postOnTimelineRepository(userId, post) {
+  const { postBody, link } = post;
   const postId = await db.query(`
     INSERT INTO posts ("userId", "postBody", link)
     VALUES ($1, $2, $3)
