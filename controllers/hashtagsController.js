@@ -1,16 +1,42 @@
 import { getHashtagsRepository } from "../repositories/hashtagsRepositories.js";
+import { getHashtagPostsRepository } from "../repositories/hashtagsRepositories.js";
+import getMetadataUrl from "../utils/getMetadataUrl.js";
 
 export async function getHashtags(req, res) {
-    try{
+    try {
         const hashtagsRows = await getHashtagsRepository();
-        
+
         const hashtags = hashtagsRows.map((obj) => {
             return obj.name;
         });
-        
+
         res.status(200).send(hashtags);
-    }catch(error){
+    } catch (error) {
         console.log("Error in getHashtags", error);
-        res.sendStatus(500); 
+        res.sendStatus(500);
+    }
+};
+
+export async function getHashtagPosts(req, res) {
+    const { hashtag } = req.params;
+    const posts = [];
+    try {
+        const postRows = await getHashtagPostsRepository(hashtag);
+
+        for(let i = 0; i < postRows.length; i++){
+            const link = postRows[i].link;
+            delete postRows[i].link;
+            const metadata = await getMetadataUrl(link);
+
+            posts.push({
+                ...postRows[i],
+                metadata: {...metadata, link}
+            });
+        };
+
+        res.status(200).send(posts);
+    } catch (error) {
+        console.log("Error in getHashtagPosts", error);
+        res.sendStatus(500);
     }
 };

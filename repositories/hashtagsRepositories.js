@@ -11,4 +11,14 @@ export async function getHashtagsRepository() {
     return hashtags.rows;
 };
 
-// localhost:5000/hashtags
+export async function getHashtagPostsRepository(props){
+    const posts = await db.query(`
+        SELECT p."postBody", p."link", u."name", u.image
+        FROM posts p
+        JOIN users u ON p."userId"=u.id
+        JOIN "hashtagsPosts" hp ON p.id=hp."postId"
+        JOIN hashtags h ON hp."hashtagId"=h.id
+        WHERE h.name = '${props}'
+    `);
+    return posts.rows;
+};
