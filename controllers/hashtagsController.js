@@ -22,8 +22,7 @@ export async function getHashtagPosts(req, res) {
     try {
         const postRows = await getHashtagPostsRepository(hashtag);
 
-        console.log(postRows);
-        res.sendStatus(200);
+        res.status(200).send(postRows);
     } catch (error) {
         console.log("Error in getHashtagPosts", error);
         res.sendStatus(500);
