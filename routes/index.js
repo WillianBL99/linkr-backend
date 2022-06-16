@@ -3,7 +3,6 @@ import timelineRouter from "./timelineRoute.js";
 import hashtagsRouter from "./hashtagsRoute.js";
 
 import authRouter from "./authRouter.js";
-import timelineRouter from "./timelineRoute.js";
 import userRouter from "./userRouter.js";
 
 const router = Router();
