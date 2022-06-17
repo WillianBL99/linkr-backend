@@ -29,8 +29,7 @@ export async function getTimeline(req, res) {
 export async function postOnTimeline(req, res) {
   try {
     const { hashtags } = req.body;
-    /* TODO: const {userId} = res.locals; */
-    const userId = 1;
+    const { userId } = res.locals.tokenData;
     
     const postId = await postOnTimelineRepository( userId, req.body );
     let valuesToHashtagPost = "";
