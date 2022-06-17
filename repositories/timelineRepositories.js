@@ -1,7 +1,6 @@
 import db from "../config/db.js";
 
 export async function getTimelineRepository() {
-  // se p."postBody" for null retornar ''
   const timeline = await db.query(`
     SELECT u.name, u.image, COALESCE(p."postBody", '') AS "postBody", p.link
     FROM users u
