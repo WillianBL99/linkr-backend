@@ -51,8 +51,8 @@ export async function insertHashtagsPost(hashtagId) {
   `);
 }
 
-export async function handleLikeRepository(userId, postId, liked) {
-  if( liked ) {
+export async function handleLikeRepository(userId, postId, isLiked) {
+  if( isLiked ) {
     await db.query(`
       INSERT INTO "likes" ("userId", "postId")
       VALUES ($1, $2)
@@ -63,4 +63,18 @@ export async function handleLikeRepository(userId, postId, liked) {
       WHERE "userId" = $1 AND "postId" = $2
     `, [userId, postId]);
   }
+
+  // se encontrar algun campo com o id do usuario (userId) retorna liked = true senão retorna liked = false
+  const {rows: likes} = await db.query(`
+    SELECT COUNT(*) AS "likes"
+    FROM "likesPosts"
+    WHERE "postId" = $1
+  `, [postId]);
+
+  const {rows:liked} = await db.query(`
+    SELECT * FROM "likesPosts"
+    WHERE "userId" = $1 AND "postId" = $2
+  `, [userId, postId]);
+
+  return {likes: likes[0].likes, liked: liked.length > 0};
 }
