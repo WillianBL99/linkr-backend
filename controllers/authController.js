@@ -37,7 +37,7 @@ export async function login(req, res) {
         if (checkUserEmail.rowCount > 0 && bcrypt.compareSync(user.password, checkUserEmail.rows[0].password)) {
             const tokenData = { 
                 userId: checkUserEmail.rows[0].id,
-                userImage: checkUserEmail.rows[0].image
+                email: checkUserEmail.rows[0].email
             }
             const token = jwt.sign(tokenData, process.env.JWT_SECRET);
             await sessionsRepository.createSessions(checkUserEmail.rows[0].id, token);
