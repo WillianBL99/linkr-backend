@@ -18,7 +18,7 @@ CREATE TABLE "sessions" (
 CREATE TABLE "posts" (
 	"id" serial NOT NULL PRIMARY KEY,
 	"userId" integer NOT NULL REFERENCES users(id),
-	"postBody" TEXT NOT NULL,
+	"postBody" TEXT,
 	"link" TEXT NOT NULL,
 	"createdAt" timestamp NOT NULL DEFAULT NOW()
 );
