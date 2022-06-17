@@ -6,3 +6,7 @@ export const createPostSchema = Joi.object().keys({
   link: Joi.string().regex(regexUrl).required(),
   hashtags: Joi.array().items(Joi.string()).required()
 });
+
+export const handleLikeSchema = Joi.object().keys({
+  liked: Joi.boolean().required()
+});

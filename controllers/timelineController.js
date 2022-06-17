@@ -57,3 +57,19 @@ export async function postOnTimeline(req, res) {
     res.sendStatus(500);    
   }
 }
+
+export async function handleLike(req, res) {
+  try {
+    const { liked } = req.body;
+    const { postId } = req.params;
+    const { userId } = res.locals;
+
+    await handleLikeRepository(userId, postId, liked);
+
+    res.sendStatus(200);
+
+  } catch (e) {
+    console.log("Error in handleLike", e);
+    res.sendStatus(500);    
+  }
+}

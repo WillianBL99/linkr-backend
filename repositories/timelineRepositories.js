@@ -50,3 +50,17 @@ export async function insertHashtagsPost(hashtagId) {
     VALUES ${hashtagId}
   `);
 }
+
+export async function handleLikeRepository(userId, postId, liked) {
+  if( liked ) {
+    await db.query(`
+      INSERT INTO "likes" ("userId", "postId")
+      VALUES ($1, $2)
+    `, [userId, postId]);
+  } else {
+    await db.query(`
+      DELETE FROM "likes"
+      WHERE "userId" = $1 AND "postId" = $2
+    `, [userId, postId]);
+  }
+}
