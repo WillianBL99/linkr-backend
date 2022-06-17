@@ -60,8 +60,12 @@ export async function postOnTimeline(req, res) {
 export async function handleLike(req, res) {
   try {
     const { liked } = req.body;
+    const { userId } = res.locals.tokenData;
     const { postId } = req.params;
-    const { userId } = res.locals;
+
+    if(!postId || isNaN(postId)) {
+      return res.sendStatus(422);
+    }
 
     await handleLikeRepository(userId, postId, liked);
 
