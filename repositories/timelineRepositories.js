@@ -68,7 +68,7 @@ export async function handleLikeRepository(userId, postId, isLiked) {
 }
 
 export async function infoLikes(userId, postId) {
-  const {rows: likes} = await db.query(`
+  const {rows: [{ likes }]} = await db.query(`
     SELECT COUNT(*) AS "likes"
     FROM "likesPosts"
     WHERE "postId" = $1
@@ -79,5 +79,22 @@ export async function infoLikes(userId, postId) {
     WHERE "userId" = $1 AND "postId" = $2
   `, [userId, postId]);
 
-  return {likes: likes[0].likes, liked: liked.length > 0};
+  const { rows: names } = await db.query(`
+    SELECT u.name
+    FROM "likesPosts" lp
+    JOIN users u ON lp."userId" = u.id
+    WHERE lp."postId" = $1 AND lp."userId" != $2
+    ORDER BY lp.id DESC
+    LIMIT 2
+    
+  `, [postId, userId]);
+
+  console.log(likes, liked.length > 0, names);
+  const namePeople = names.map(name => name.name);
+
+  return {
+    likes, 
+    liked: liked.length > 0,
+    namePeople
+  };
 }
