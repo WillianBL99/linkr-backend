@@ -13,7 +13,7 @@ export async function getHashtagsRepository() {
 
 export async function getHashtagPostsRepository(props){
     const posts = await db.query(`
-        SELECT p.id, p."postBody", p."link", u."name", u.image
+        SELECT p.id, p."postBody", p."link", p."userId", u."name", u.image
         FROM posts p
         JOIN users u ON p."userId"=u.id
         JOIN "hashtagsPosts" hp ON p.id=hp."postId"
