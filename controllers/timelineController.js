@@ -1,9 +1,10 @@
-import { createHashtag, getHashtagByName, insertHashtagsPost, postOnTimelineRepository } from "../repositories/timelineRepositories.js";
+import { createHashtag, getHashtagByName, handleLikeRepository, infoLikes, insertHashtagsPost, postOnTimelineRepository } from "../repositories/timelineRepositories.js";
 import getMetadataUrl from "../utils/getMetadataUrl.js";
 
 export async function getTimeline(req, res) {
   try {
     const { timelineQuery } = res.locals;
+    const { userId } = res.locals.tokenData;
     const timeline = [];
 
     for (let i = 0; i < timelineQuery.length; i++) {
@@ -13,7 +14,8 @@ export async function getTimeline(req, res) {
 
       timeline.push({
         ...timelineQuery[i],
-        metadata: {...metadata, link}
+        metadata: {...metadata, link},
+        infoLikes: await infoLikes( userId, timelineQuery[i].postId )
       });
     }  
 
@@ -29,8 +31,7 @@ export async function getTimeline(req, res) {
 export async function postOnTimeline(req, res) {
   try {
     const { hashtags } = req.body;
-    /* TODO: const {userId} = res.locals; */
-    const userId = 1;
+    const { userId } = res.locals.tokenData;
     
     const postId = await postOnTimelineRepository( userId, req.body );
     let valuesToHashtagPost = "";
@@ -54,6 +55,26 @@ export async function postOnTimeline(req, res) {
 
   } catch (e) {
     console.log("Error in postOnTimeline", e);
+    res.sendStatus(500);    
+  }
+}
+
+export async function handleLike(req, res) {
+  try {
+    const { liked } = req.body;
+    const { userId } = res.locals.tokenData;
+    const { id:postId } = req.params;
+    
+    if(!postId || isNaN(postId)) {
+      return res.sendStatus(422);
+    }
+
+    const infoLikes = await handleLikeRepository(userId, postId, liked);
+
+    res.status(200).send(infoLikes);
+
+  } catch (e) {
+    console.log("Error in handleLike", e);
     res.sendStatus(500);    
   }
 }

@@ -1,8 +1,8 @@
 import db from "../config/db.js";
 
-export async function getTimelineRepository() {
+export async function getTimelineRepository( userId ) {
   const timeline = await db.query(`
-    SELECT u.name, u.image, COALESCE(p."postBody", '') AS "postBody", p.link
+    SELECT u.name, u.image, p.id AS "postId", COALESCE(p."postBody", '') AS "postBody", p.link
     FROM users u
     JOIN posts p ON u.id = p."userId"
     ORDER BY p."createdAt" DESC
@@ -49,4 +49,36 @@ export async function insertHashtagsPost(hashtagId) {
     INSERT INTO "hashtagsPosts" ("postId", "hashtagId")
     VALUES ${hashtagId}
   `);
+}
+
+export async function handleLikeRepository(userId, postId, isLiked) {
+  if( isLiked ) {
+    await db.query(`
+      INSERT INTO "likesPosts" ("userId", "postId")
+      VALUES ($1, $2)
+    `, [userId, postId]);
+  } else {
+    await db.query(`
+      DELETE FROM "likesPosts"
+      WHERE "userId" = $1 AND "postId" = $2
+    `, [userId, postId]);
+  }
+
+  return await infoLikes(userId, postId);
+}
+
+export async function infoLikes(userId, postId) {
+  const {rows: likes} = await db.query(`
+    SELECT COUNT(*) AS "likes"
+    FROM "likesPosts"
+    WHERE "postId" = $1
+  `, [postId]);
+
+  const {rows:liked} = await db.query(`
+    SELECT * FROM "likesPosts"
+    WHERE "userId" = $1 AND "postId" = $2
+  `, [userId, postId]);
+
+  console.log(likes, liked);
+  return {likes: likes[0].likes, liked: liked.length > 0};
 }
