@@ -38,7 +38,7 @@ export async function login(req, res) {
                 userId: checkUserEmail.rows[0].id,
                 userImage: checkUserEmail.rows[0].image
             }
-            console.log(tokenData.userId);
+        
             const token = jwt.sign(tokenData, process.env.JWT_SECRET);
             await sessionsRepository.createSessions(checkUserEmail.rows[0].id, token);
             res.status(200).send(token);

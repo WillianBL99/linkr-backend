@@ -2,7 +2,7 @@ import { postDeleter } from "../repositories/postsRepository.js";
 
 export async function deletePost(req, res) {
     const {postId} = req.params;
-    console.log(postId);
+
     try{
         await postDeleter(postId);
         res.status(200).send("Post deleted");

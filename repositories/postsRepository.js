@@ -8,7 +8,6 @@ export async function getUserByPostId(postId){
 };
 
 export async function postDeleter(postId){
-    console.log(postId);
     await db.query(
         `DELETE FROM "posts" WHERE id = $1`,[postId]
     );
