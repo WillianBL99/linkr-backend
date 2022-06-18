@@ -1,9 +1,9 @@
 import { Router } from "express";
 import { getHashtags, getHashtagPosts } from "../controllers/hashtagsController.js";
-//#TODO: ## Insert **validateToken** to check authorization
+import { validateToken } from "../middlewares/authMiddleware.js";
 const hashtagsRouter = Router();
 
 hashtagsRouter.get('/hashtags', getHashtags);
-hashtagsRouter.get('/hashtag/:hashtag', getHashtagPosts);
+hashtagsRouter.get('/hashtag/:hashtag', validateToken, getHashtagPosts);
 
 export default hashtagsRouter;
