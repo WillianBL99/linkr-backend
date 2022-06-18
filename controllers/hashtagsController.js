@@ -1,5 +1,6 @@
 import { getHashtagsRepository } from "../repositories/hashtagsRepositories.js";
 import { getHashtagPostsRepository } from "../repositories/hashtagsRepositories.js";
+import {infoLikes} from "../repositories/timelineRepositories.js";
 import getMetadataUrl from "../utils/getMetadataUrl.js";
 
 export async function getHashtags(req, res) {
@@ -19,6 +20,7 @@ export async function getHashtags(req, res) {
 
 export async function getHashtagPosts(req, res) {
     const { hashtag } = req.params;
+    const { userId } = res.locals.tokenData;
     const posts = [];
     try {
         const postRows = await getHashtagPostsRepository(hashtag);
@@ -30,7 +32,8 @@ export async function getHashtagPosts(req, res) {
 
             posts.push({
                 ...postRows[i],
-                metadata: {...metadata, link}
+                metadata: {...metadata, link},
+                infoLikes: await infoLikes( userId, postRows[i].postId )
             });
         };
 
