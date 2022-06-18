@@ -41,7 +41,7 @@ export async function login(req, res) {
             }
             const token = jwt.sign(tokenData, process.env.JWT_SECRET);
             await sessionsRepository.createSessions(checkUserEmail.rows[0].id, token);
-            res.status(200).send({token});
+            res.status(200).send( token );
         } else {
             res.sendStatus(401);
         }

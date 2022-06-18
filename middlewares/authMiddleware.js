@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const validateToken = async (req, res, next) => {
+    console.log("validateToken", req.headers.authorization, req.body);
     const { authorization } = req.headers;
     const secret = process.env.JWT_SECRET;
 
