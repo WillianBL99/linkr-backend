@@ -10,11 +10,11 @@ export const validateToken = async (req, res, next) => {
 
     if (!token) return res.status(401).send({ message: "Token is missing" });
     try {
-        const tokenData = await jwt.verify(token, secret);
+        const tokenData = jwt.verify(token, secret);
         if (!tokenData) return res.status(401).send({ message: "Invalid Token" });
 
-        const { userId, userImage } = tokenData;
-        res.locals.tokenData = { userId, userImage };
+        const { userId, email } = tokenData;
+        res.locals.tokenData = { userId, email };
         next();
     } catch (error) {
         res.status(500).send(error);
