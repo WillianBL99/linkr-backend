@@ -4,8 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import userRepositories from "../repositories/userRepositories.js";
-import sessionsRepository from "../repositories/sessionsRepositories.js"
-
+import sessionsRepository from "../repositories/sessionsRepositories.js";
 
 
 export async function signUp(req, res) {
@@ -39,6 +38,7 @@ export async function login(req, res) {
                 userId: checkUserEmail.rows[0].id,
                 userImage: checkUserEmail.rows[0].image
             }
+            console.log(tokenData.userId);
             const token = jwt.sign(tokenData, process.env.JWT_SECRET);
             await sessionsRepository.createSessions(checkUserEmail.rows[0].id, token);
             res.status(200).send(token);
