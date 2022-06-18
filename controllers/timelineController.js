@@ -69,9 +69,9 @@ export async function handleLike(req, res) {
       return res.sendStatus(422);
     }
 
-    await handleLikeRepository(userId, postId, liked);
+    const infoLikes = await handleLikeRepository(userId, postId, liked);
 
-    res.sendStatus(200);
+    res.status(200).send(infoLikes);
 
   } catch (e) {
     console.log("Error in handleLike", e);
