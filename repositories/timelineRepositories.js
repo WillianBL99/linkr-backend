@@ -2,7 +2,7 @@ import db from "../config/db.js";
 
 export async function getTimelineRepository( userId ) {
   const timeline = await db.query(`
-    SELECT u.name, u.image, p.id AS "postId", COALESCE(p."postBody", '') AS "postBody", p.link
+    SELECT u.name, u.image, p.id AS "postId", p."userId", COALESCE(p."postBody", '') AS "postBody", p.link
     FROM users u
     JOIN posts p ON u.id = p."userId"
     ORDER BY p."createdAt" DESC

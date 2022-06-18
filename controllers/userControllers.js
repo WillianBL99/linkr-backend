@@ -1,23 +1,31 @@
 import userRepository from "./../repositories/userRepositories.js";
+import getMetadataUrl from "../utils/getMetadataUrl.js";
 
 export async function getUserPosts(req, res) {
-    const { id } = req.params;
+    const id = parseInt(req.params.id);
+    const posts = req.query.posts;
 
     try {
         let user = await userRepository.getUserById(id);
-        
+
         if (user.length === 0) {
             res.sendStatus(404);
             return;
         }
 
-        user = user[0];
+        if(posts === 'false') {
+            res.status(200).send(user[0]);
+            return;
+        }
 
         const userPosts = await userRepository.getUserPosts(id);
 
-        user.posts = userPosts;
+        for (let post of userPosts) {
+            const metadata = await getMetadataUrl(post.link);
+            post.metadata = {...metadata, link: post.link};
+        }
 
-        res.status(200).send(user);
+        res.status(200).send(userPosts);
     } catch (e) {
         console.log(e);
         res.sendStatus(500);
@@ -31,7 +39,7 @@ export async function getUsers(req, res) {
 
     try {
         const users = await userRepository.getUsersByName(filter);
-        if(users.length === 0){
+        if (users.length === 0) {
             res.sendStatus(404);
             return;
         }
