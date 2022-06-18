@@ -54,12 +54,12 @@ export async function insertHashtagsPost(hashtagId) {
 export async function handleLikeRepository(userId, postId, isLiked) {
   if( isLiked ) {
     await db.query(`
-      INSERT INTO "likes" ("userId", "postId")
+      INSERT INTO "likesPosts" ("userId", "postId")
       VALUES ($1, $2)
     `, [userId, postId]);
   } else {
     await db.query(`
-      DELETE FROM "likes"
+      DELETE FROM "likesPosts"
       WHERE "userId" = $1 AND "postId" = $2
     `, [userId, postId]);
   }

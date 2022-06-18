@@ -1,4 +1,4 @@
-import { createHashtag, getHashtagByName, infoLikes, insertHashtagsPost, postOnTimelineRepository } from "../repositories/timelineRepositories.js";
+import { createHashtag, getHashtagByName, handleLikeRepository, infoLikes, insertHashtagsPost, postOnTimelineRepository } from "../repositories/timelineRepositories.js";
 import getMetadataUrl from "../utils/getMetadataUrl.js";
 
 export async function getTimeline(req, res) {
@@ -63,8 +63,8 @@ export async function handleLike(req, res) {
   try {
     const { liked } = req.body;
     const { userId } = res.locals.tokenData;
-    const { postId } = req.params;
-
+    const { id:postId } = req.params;
+    
     if(!postId || isNaN(postId)) {
       return res.sendStatus(422);
     }
