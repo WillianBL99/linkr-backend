@@ -3,6 +3,7 @@ import getMetadataUrl from "../utils/getMetadataUrl.js";
 
 export async function getUserPosts(req, res) {
     const id = parseInt(req.params.id);
+    const posts = req.query.posts;
 
     try {
         let user = await userRepository.getUserById(id);
@@ -12,11 +13,16 @@ export async function getUserPosts(req, res) {
             return;
         }
 
+        if(posts === 'false') {
+            res.status(200).send(user[0]);
+            return;
+        }
+
         const userPosts = await userRepository.getUserPosts(id);
 
         for (let post of userPosts) {
-            post.metadata = await getMetadataUrl(post.link);
-            post.metadata.link = post.link;
+            const metadata = await getMetadataUrl(post.link);
+            post.metadata = {...metadata, link: post.link};
         }
 
         res.status(200).send(userPosts);
