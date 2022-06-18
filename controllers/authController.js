@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt'
+import bcrypt, { hashSync } from 'bcrypt'
 import jwt from 'jsonwebtoken';
 import dotenv from "dotenv";
 dotenv.config();
@@ -37,9 +37,9 @@ export async function login(req, res) {
             const tokenData = { 
                 userId: checkUserEmail.rows[0].id
             }
-        
-            const token = jwt.sign(tokenData, process.env.JWT_SECRET);
+            const token = jwt.sign(tokenData,  process.env.JWT_SECRET);
             await sessionsRepository.createSessions(checkUserEmail.rows[0].id, token);
+            //TODO: Validar uso do token. Utilizando token "puro" ou mandar em objeto
             res.status(200).send( token );
         } else {
             res.sendStatus(401);
@@ -48,6 +48,24 @@ export async function login(req, res) {
     } catch (error) {
         console.log(error);
         res.status(500).send("login error");
+    }
+}
+
+export async function validateSession(req, res) {
+    const token = req.body;
+
+    try {
+        const checkSession = await sessionsRepository.getSession(token.token);
+        if (checkSession.rowCount < 1){
+            return res.status(404).send("session not found");
+        } else {
+
+            //TODO: Validar uso do token. Utilizando token "puro" ou mandar em objeto
+            res.status(200).send( token.token );
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("token validation error");
     }
 }
 
