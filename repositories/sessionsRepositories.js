@@ -9,8 +9,18 @@ async function createSessions(userId, token) {
     );
 }
 
+async function getSession(token) {
+    return db.query(`
+    SELECT *
+    FROM sessions
+    WHERE token =$1`,
+    [token]
+    );
+}
+
 const sessionsRepository = {
-    createSessions
+    createSessions,
+    getSession
 }
 
 export default sessionsRepository;
