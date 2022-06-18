@@ -79,6 +79,5 @@ export async function infoLikes(userId, postId) {
     WHERE "userId" = $1 AND "postId" = $2
   `, [userId, postId]);
 
-  console.log(likes, liked);
   return {likes: likes[0].likes, liked: liked.length > 0};
 }
