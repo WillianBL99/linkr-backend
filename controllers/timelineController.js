@@ -1,9 +1,10 @@
-import { createHashtag, getHashtagByName, insertHashtagsPost, postOnTimelineRepository } from "../repositories/timelineRepositories.js";
+import { createHashtag, getHashtagByName, infoLikes, insertHashtagsPost, postOnTimelineRepository } from "../repositories/timelineRepositories.js";
 import getMetadataUrl from "../utils/getMetadataUrl.js";
 
 export async function getTimeline(req, res) {
   try {
     const { timelineQuery } = res.locals;
+    const { userId } = res.locals.tokenData;
     const timeline = [];
 
     for (let i = 0; i < timelineQuery.length; i++) {
@@ -13,7 +14,8 @@ export async function getTimeline(req, res) {
 
       timeline.push({
         ...timelineQuery[i],
-        metadata: {...metadata, link}
+        metadata: {...metadata, link},
+        infoLikes: await infoLikes( userId, timelineQuery[i].id )
       });
     }  
 

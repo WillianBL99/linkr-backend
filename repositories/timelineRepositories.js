@@ -1,6 +1,6 @@
 import db from "../config/db.js";
 
-export async function getTimelineRepository() {
+export async function getTimelineRepository( userId ) {
   const timeline = await db.query(`
     SELECT u.name, u.image, p.id AS "postId", COALESCE(p."postBody", '') AS "postBody", p.link
     FROM users u
@@ -64,7 +64,10 @@ export async function handleLikeRepository(userId, postId, isLiked) {
     `, [userId, postId]);
   }
 
-  // se encontrar algun campo com o id do usuario (userId) retorna liked = true senão retorna liked = false
+  return infoLikes(userId, postId);
+}
+
+export async function infoLikes(userId, postId) {
   const {rows: likes} = await db.query(`
     SELECT COUNT(*) AS "likes"
     FROM "likesPosts"

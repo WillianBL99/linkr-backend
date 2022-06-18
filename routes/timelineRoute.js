@@ -8,8 +8,10 @@ import { validateToken } from "../middlewares/authMiddleware.js";
 
 const timelineRouter = Router();
 
+timelineRouter.use(validateToken);
+
 timelineRouter.get("/timeline",getTimelineMiddleware, getTimeline);
-timelineRouter.post("/timeline/post", validateToken, validateSchema(createPostSchema), postOnTimeline);
-timelineRouter.post("/timeline/post/:id/like", validateToken, validateSchema(handleLikeSchema), handleLike);
+timelineRouter.post("/timeline/post", validateSchema(createPostSchema), postOnTimeline);
+timelineRouter.post("/timeline/post/:id/like", validateSchema(handleLikeSchema), handleLike);
 
 export default timelineRouter;
