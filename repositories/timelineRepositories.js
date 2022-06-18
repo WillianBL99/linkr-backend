@@ -64,7 +64,7 @@ export async function handleLikeRepository(userId, postId, isLiked) {
     `, [userId, postId]);
   }
 
-  return infoLikes(userId, postId);
+  return await infoLikes(userId, postId);
 }
 
 export async function infoLikes(userId, postId) {
@@ -79,5 +79,6 @@ export async function infoLikes(userId, postId) {
     WHERE "userId" = $1 AND "postId" = $2
   `, [userId, postId]);
 
+  console.log(likes, liked);
   return {likes: likes[0].likes, liked: liked.length > 0};
 }

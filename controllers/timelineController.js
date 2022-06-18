@@ -15,7 +15,7 @@ export async function getTimeline(req, res) {
       timeline.push({
         ...timelineQuery[i],
         metadata: {...metadata, link},
-        infoLikes: await infoLikes( userId, timelineQuery[i].id )
+        infoLikes: await infoLikes( userId, timelineQuery[i].postId )
       });
     }  
 
