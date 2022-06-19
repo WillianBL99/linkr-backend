@@ -28,8 +28,7 @@ export async function getTimeline(req, res) {
         ...{ name, image, postId, userId, postBody, postStatus },
         infoLikes: await infoLikes( tokenData.userId, timelineQuery[i].postId )
       });
-    }  
-    console.log(timeline);
+    }
 
     res.status(200).send(timeline);
     
