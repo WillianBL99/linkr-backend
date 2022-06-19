@@ -41,7 +41,6 @@ export async function login(req, res) {
             await sessionsRepository.createSessions(checkUserEmail.rows[0].id, token);
 
             const [{ image: imgUser }] = await getUserById(tokenData.userId);
-            console.log(await getUserById(tokenData.userId), imgUser);
 
             res.status(200).send( { token, imgUser} );
         } else {

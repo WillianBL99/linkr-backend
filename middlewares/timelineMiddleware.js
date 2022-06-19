@@ -21,7 +21,7 @@ export async function createPostMiddleware(req, res, next) {
     console.log(hashtags, link);
     const linkId = await handlePostsLinks( link );
     console.log(linkId);
-    const postId = await postOnTimelineRepository( userId,linkId, req.body );   
+    const postId = await postOnTimelineRepository( userId, linkId, req.body );   
     console.log(postId);     
     
     if(!hashtags.length) {
