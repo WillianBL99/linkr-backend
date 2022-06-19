@@ -12,7 +12,7 @@ export const validateToken = async (req, res, next) => {
     if (!token) return res.status(401).send({ message: "Token is missing" });
     try {
         const {rows : [session]} = await getSession(token);
-        console.log(session);
+        
         if(!session) {
             return res.status(401).send({ message: "Invalid token" });
         }
