@@ -25,7 +25,6 @@ export async function getTimelineRepository( userId ) {
 export async function postOnTimelineRepository(userId, linkId, post) {
   const { postBody } = post;
   const body = postBody === '' ? null : postBody;
-  console.log(userId, linkId, body);
 
   const {rows: [{id}]} = await db.query(`
     INSERT INTO posts ("userId", "postBody", "linkId")
@@ -102,7 +101,6 @@ export async function infoLikes(userId, postId) {
     
   `, [postId, userId]);
 
-  console.log(likes, liked.length > 0, names);
   const namePeople = names.map(name => name.name);
 
   return {

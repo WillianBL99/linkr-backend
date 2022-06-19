@@ -18,11 +18,8 @@ export async function createPostMiddleware(req, res, next) {
     const { hashtags, link } = req.body;
     const { userId } = res.locals.tokenData;
     
-    console.log(hashtags, link);
     const linkId = await handlePostsLinks( link );
-    console.log(linkId);
-    const postId = await postOnTimelineRepository( userId, linkId, req.body );   
-    console.log(postId);     
+    const postId = await postOnTimelineRepository( userId, linkId, req.body ); 
     
     if(!hashtags.length) {
       return res.sendStatus(201);
