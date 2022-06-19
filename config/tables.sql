@@ -14,12 +14,31 @@ CREATE TABLE "sessions" (
 	"createdAt" TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE "postStatus" (
+	"id" INTEGER PRIMARY KEY,
+	"name" TEXT NOT NULL UNIQUE
+);
+
+INSERT INTO "postStatus" ("id", "name")
+VALUES
+	(1, 'created'),
+	(2, 'updated'),
+	(3, 'deleted');
+
+CREATE TABLE "links" (
+	"id" SERIAL PRIMARY KEY,
+	"link" TEXT NOT NULL,
+	"title" TEXT,
+	"description" TEXT,
+	"image" TEXT
+);
 
 CREATE TABLE "posts" (
 	"id" serial NOT NULL PRIMARY KEY,
 	"userId" integer NOT NULL REFERENCES users(id),
 	"postBody" TEXT,
-	"link" TEXT NOT NULL,
+	"linkId" integer REFERENCES links(id),
+	"statusId" INTEGER NOT NULL REFERENCES "postStatus"(id) DEFAULT 1,
 	"createdAt" timestamp NOT NULL DEFAULT NOW()
 );
 

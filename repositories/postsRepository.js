@@ -8,7 +8,8 @@ export async function getUserByPostId(postId){
 };
 
 export async function postDeleter(postId){
+    console.log("postDeleter", postId);
     await db.query(
-        `DELETE FROM "posts" WHERE id = $1`,[postId]
+        `UPDATE "posts" SET "statusId" = 3 WHERE id = $1`,[postId]
     );
 };
