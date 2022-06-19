@@ -1,23 +1,35 @@
 import { createHashtag, getHashtagByName, handleLikeRepository, infoLikes, insertHashtagsPost, postOnTimelineRepository } from "../repositories/timelineRepositories.js";
-import getMetadataUrl from "../utils/getMetadataUrl.js";
 
 export async function getTimeline(req, res) {
   try {
     const { timelineQuery } = res.locals;
-    const { userId } = res.locals.tokenData;
+    const { tokenData } = res.locals;
     const timeline = [];
 
     for (let i = 0; i < timelineQuery.length; i++) {
-      const link = timelineQuery[i].link;
-      delete timelineQuery[i].link;
-      const metadata = await getMetadataUrl(link);
+      const { link, title, imageLink } = timelineQuery[i];
+      const metadata = {
+        link,
+        title,
+        image: imageLink
+      };
+
+      const {
+        name,
+        image,
+        postId,
+        userId,
+        postBody,
+        postStatus
+      } = timelineQuery[i];
 
       timeline.push({
-        ...timelineQuery[i],
-        metadata: {...metadata, link},
-        infoLikes: await infoLikes( userId, timelineQuery[i].postId )
+        metadata,
+        ...{ name, image, postId, userId, postBody, postStatus },
+        infoLikes: await infoLikes( tokenData.userId, timelineQuery[i].postId )
       });
     }  
+    console.log(timeline);
 
     res.status(200).send(timeline);
     
@@ -29,34 +41,7 @@ export async function getTimeline(req, res) {
 
 
 export async function postOnTimeline(req, res) {
-  try {
-    const { hashtags } = req.body;
-    const { userId } = res.locals.tokenData;
-    
-    const postId = await postOnTimelineRepository( userId, req.body );
-    let valuesToHashtagPost = "";
-    
-    if(!hashtags.length) {
-      return res.sendStatus(201);
-    }
-    
-    for(let i = 0; i < hashtags.length; i++) {
-      let hashtagId = await getHashtagByName(hashtags[i]);
-      
-      valuesToHashtagPost += `(${postId}, ${hashtagId || await createHashtag(hashtags[i])})`;
-      if(i !== hashtags.length - 1) {
-        valuesToHashtagPost += ",";
-      }
-    }
-
-    await insertHashtagsPost(valuesToHashtagPost);
-
-    res.sendStatus(201);
-
-  } catch (e) {
-    console.log("Error in postOnTimeline", e);
-    res.sendStatus(500);    
-  }
+  res.sendStatus(201);
 }
 
 export async function handleLike(req, res) {
