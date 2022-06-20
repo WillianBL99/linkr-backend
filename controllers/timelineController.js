@@ -1,34 +1,12 @@
 import { createHashtag, getHashtagByName, handleLikeRepository, infoLikes, insertHashtagsPost, postOnTimelineRepository } from "../repositories/timelineRepositories.js";
+import handlePostsData from "../utils/handlePostsData.js";
 
 export async function getTimeline(req, res) {
   try {
     const { timelineQuery } = res.locals;
     const { tokenData } = res.locals;
-    const timeline = [];
 
-    for (let i = 0; i < timelineQuery.length; i++) {
-      const { link, title, imageLink } = timelineQuery[i];
-      const metadata = {
-        link,
-        title,
-        image: imageLink
-      };
-
-      const {
-        name,
-        image,
-        postId,
-        userId,
-        postBody,
-        postStatus
-      } = timelineQuery[i];
-
-      timeline.push({
-        metadata,
-        ...{ name, image, postId, userId, postBody, postStatus },
-        infoLikes: await infoLikes( tokenData.userId, timelineQuery[i].postId )
-      });
-    }
+    const timeline = await handlePostsData(tokenData.userId, timelineQuery);
 
     res.status(200).send(timeline);
     
@@ -37,7 +15,6 @@ export async function getTimeline(req, res) {
     res.sendStatus(500);    
   }
 }
-
 
 export async function postOnTimeline(req, res) {
   res.sendStatus(201);
