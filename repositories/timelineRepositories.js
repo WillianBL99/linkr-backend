@@ -1,28 +1,5 @@
 import db from "../config/db.js";
 
-export async function getTimelineRepository( userId ) {
-  const timeline = await db.query(`
-    SELECT 
-      u.name, 
-      u.image, 
-      p.id AS "postId", 
-      p."userId", 
-      COALESCE(p."postBody", '') AS "postBody",
-      s.name AS "postStatus",
-      l.link,
-      l.title,
-      l.image AS "imageLink"
-    FROM users u
-    JOIN posts p ON u.id = p."userId"
-    JOIN "postStatus" s ON p."statusId" = s.id
-    JOIN links l ON p."linkId" = l.id
-    WHERE p."statusId" <> 3
-    ORDER BY p."createdAt" DESC
-    LIMIT 20
-  `);
-  return timeline.rows;
-}
-
 export async function postOnTimelineRepository(userId, linkId, post) {
   const { postBody } = post;
   const body = postBody === '' ? null : postBody;

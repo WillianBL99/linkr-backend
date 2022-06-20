@@ -1,10 +1,11 @@
 import userRepository from "./../repositories/userRepositories.js";
 import getMetadataUrl from "../utils/getMetadataUrl.js";
+import { getPostsByFilter } from "../repositories/postsRepository.js";
 
 export async function getUserPosts(req, res) {
     const id = parseInt(req.params.id);
     const posts = req.query.posts;
-
+    
     try {
         let user = await userRepository.getUserById(id);
 
@@ -18,7 +19,11 @@ export async function getUserPosts(req, res) {
             return;
         }
 
-        const userPosts = await userRepository.getUserPosts(id);
+        const filter = `WHERE "userId" = ${id} AND "statusId" <> 3`
+
+        // const userPosts = await userRepository.getUserPosts(id);
+
+        const userPosts = await getPostsByFilter(filter);
 
         for (let post of userPosts) {
             const metadata = await getMetadataUrl(post.link);
