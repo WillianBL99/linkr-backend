@@ -1,6 +1,6 @@
 import { infoLikes } from "../repositories/timelineRepositories.js";
 
-export default async function handlePostsData(userId, postsData) {
+export default async function handlePostsData(userLoggedId, postsData) {
     for (let i = 0; i<postsData.length; i++) {
         const post = postsData[i];
         const {
@@ -24,9 +24,10 @@ export default async function handlePostsData(userId, postsData) {
             userId,
             postBody,
             postStatus,
-            infoLikes: await infoLikes(userId, postId)
+            infoLikes: await infoLikes(userLoggedId, postId)
         };
     }
+
 
     return postsData;
 }
