@@ -9,7 +9,7 @@ async function createSessions(userId, token) {
     );
 }
 
-async function getSession(token) {
+export async function getSession(token) {
     return db.query(`
     SELECT *
     FROM sessions

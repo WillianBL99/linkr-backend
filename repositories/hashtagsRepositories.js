@@ -5,20 +5,10 @@ export async function getHashtagsRepository() {
         SELECT h."name", COUNT(hp."hashtagId") as count
         FROM hashtags h
         JOIN "hashtagsPosts" hp ON h.id = hp."hashtagId"
+        JOIN "posts" p ON hp."postId" = p.id
+        WHERE p."statusId" <> 3
         GROUP BY h."name" 
         ORDER BY count desc limit 10
     `);
     return hashtags.rows;
-};
-
-export async function getHashtagPostsRepository(props){
-    const posts = await db.query(`
-        SELECT p.id, p."postBody", p."link", p."userId", u."name", u.image
-        FROM posts p
-        JOIN users u ON p."userId"=u.id
-        JOIN "hashtagsPosts" hp ON p.id=hp."postId"
-        JOIN hashtags h ON hp."hashtagId"=h.id
-        WHERE h.name = $1
-    `,[props]);
-    return posts.rows;
 };

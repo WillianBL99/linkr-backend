@@ -40,17 +40,6 @@ async function createUser(name, email, password, imgUrl) {
     );
 }
 
-export async function getUserPosts(id){
-    const posts = await db.query(
-        `SELECT p."postBody", p.link, p.id, p."userId", u.name, u.image FROM posts p
-        JOIN users u ON u.id = p."userId"
-        WHERE "userId" = $1
-        ORDER BY p."createdAt" DESC;`,
-        [id]
-    );
-    return posts.rows;
-};
-
 export async function getUserById(id){
     const user = await db.query(
         `SELECT name, image, id FROM users
@@ -78,7 +67,7 @@ const userRepostory = {
     checkNameEmail,
     getUserById,
     getUsersByName,
-    getUserPosts
+    // getUserPosts
 }
 
 export default userRepostory;

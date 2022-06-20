@@ -1,5 +1,5 @@
 import { getHashtagsRepository } from "../repositories/hashtagsRepositories.js";
-import { getHashtagPostsRepository } from "../repositories/hashtagsRepositories.js";
+import { getPostsByFilter } from "../repositories/postsRepository.js";
 import { infoLikes } from "../repositories/timelineRepositories.js";
 import getMetadataUrl from "../utils/getMetadataUrl.js";
 
@@ -22,8 +22,13 @@ export async function getHashtagPosts(req, res) {
     const { hashtag } = req.params;
     const { userId } = res.locals.tokenData;
     const posts = [];
+
+    const filter = `
+    JOIN "hashtagsPosts" hp ON p.id=hp."postId"
+    JOIN hashtags h ON hp."hashtagId"=h.id
+    WHERE h.name = '${hashtag}' AND "statusId" <> 3`
     try {
-        const postRows = await getHashtagPostsRepository(hashtag);
+        const postRows = await getPostsByFilter(filter);
 
         for (let i = 0; i < postRows.length; i++) {
             const link = postRows[i].link;
