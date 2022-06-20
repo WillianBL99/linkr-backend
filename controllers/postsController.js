@@ -1,4 +1,4 @@
-import { postDeleter, postUpdate } from "../repositories/postsRepository.js";
+import { postDeleter, postUpdate, getPostById } from "../repositories/postsRepository.js";
 import { getUserByPostId } from "./../repositories/postsRepository.js";
 
 export async function deletePost(req, res) {
@@ -6,6 +6,14 @@ export async function deletePost(req, res) {
     const { userId } = res.locals.tokenData;
     
     try{
+
+        if(!postId || isNaN(postId)) {
+            return res.sendStatus(422);
+        }
+        
+        const checkPost = await getPostById(postId);
+        if (checkPost.length < 1) return res.status(404).send("Post does not exist");
+
         const validation = await getUserByPostId(postId);
         if (validation.userId !== userId) return res.status(401).send("Not user's post");
 
@@ -24,6 +32,15 @@ export async function updatePost(req, res) {
     const { userId } = res.locals.tokenData;
     
     try{
+
+        if(!postId || isNaN(postId)) {
+            return res.sendStatus(422);
+        }
+
+        const checkPost = await getPostById(postId);
+        console.log(checkPost)
+        if (checkPost.length < 1) return res.status(404).send("Post does not exist");
+
         const validation = await getUserByPostId(postId);
         if (validation.userId !== userId) return res.status(401).send("Not user's post");
 
