@@ -1,9 +1,11 @@
-import { createHashtag, getHashtagByName, getTimelineRepository, insertHashtagsPost, insertLink, postOnTimelineRepository } from "../repositories/timelineRepositories.js";
+import { getPostsByFilter } from "../repositories/postsRepository.js";
+import { createHashtag, getHashtagByName, insertHashtagsPost, insertLink, postOnTimelineRepository } from "../repositories/timelineRepositories.js";
 import getMetadataUrl from "../utils/getMetadataUrl.js";
 
 export async function getTimelineMiddleware(req, res, next) {
+  const filter = `WHERE p."statusId" <> 3`
   try {
-    const timeline = await getTimelineRepository();
+    const timeline = await getPostsByFilter(filter);
     res.locals.timelineQuery = timeline;
     next();
 
