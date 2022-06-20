@@ -12,3 +12,12 @@ export async function postDeleter(postId){
         `DELETE FROM "posts" WHERE id = $1`,[postId]
     );
 };
+
+export async function postUpdate(postId, newText) {
+    await db.query(`
+        UPDATE posts
+        SET "postBody = $1"
+        WHERE id = $2`,
+    [newText, postId]
+    );
+}

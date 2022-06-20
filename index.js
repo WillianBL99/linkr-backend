@@ -11,7 +11,7 @@ app.use(cors())
 app.use(json());
 app.use(router);
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 app.listen(port, () => {
   console.log(`Mode: ${process.env.MODE || "DEV"}`);
   console.log(`Server is up on port: ${port}`);

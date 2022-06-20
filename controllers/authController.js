@@ -37,7 +37,8 @@ export async function login(req, res) {
             const tokenData = { 
                 userId: checkUserEmail.rows[0].id
             }
-            const token = jwt.sign(tokenData,  process.env.JWT_SECRET);
+            //TODO:change 
+            const token = jwt.sign(tokenData,  "driven");
             await sessionsRepository.createSessions(checkUserEmail.rows[0].id, token);
             //TODO: Validar uso do token. Utilizando token "puro" ou mandar em objeto
             res.status(200).send( token );
