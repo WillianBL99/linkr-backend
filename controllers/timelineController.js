@@ -29,7 +29,7 @@ export async function handleLike(req, res) {
     if(!postId || isNaN(postId)) {
       return res.sendStatus(422);
     }
-
+    
     const infoLikes = await handleLikeRepository(userId, postId, liked);
 
     res.status(200).send(infoLikes);

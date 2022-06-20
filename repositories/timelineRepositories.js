@@ -34,7 +34,6 @@ export async function createHashtag(name) {
 }
 
 export async function insertHashtagsPost(hashtagsValues) {
-  console.log(hashtagsValues);
   await db.query(`
     INSERT INTO "hashtagsPosts" ("postId", "hashtagId")
     VALUES ${hashtagsValues}
@@ -42,16 +41,23 @@ export async function insertHashtagsPost(hashtagsValues) {
 }
 
 export async function handleLikeRepository(userId, postId, isLiked) {
-  if( isLiked ) {
-    await db.query(`
-      INSERT INTO "likesPosts" ("userId", "postId")
-      VALUES ($1, $2)
-    `, [userId, postId]);
-  } else {
+  const { rows: alreadyLiked } = await db.query(`
+    SELECT *
+    FROM "likesPosts"
+    WHERE "userId" = $1 AND "postId" = $2
+  `, [userId, postId]);  
+
+  if( alreadyLiked.length > 0 && !isLiked ) {
     await db.query(`
       DELETE FROM "likesPosts"
       WHERE "userId" = $1 AND "postId" = $2
     `, [userId, postId]);
+    
+  } else if( alreadyLiked.length === 0 && isLiked ) {
+    await db.query(`
+    INSERT INTO "likesPosts" ("userId", "postId")
+    VALUES ($1, $2)
+  `, [userId, postId]);
   }
 
   return await infoLikes(userId, postId);
