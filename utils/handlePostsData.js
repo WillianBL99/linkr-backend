@@ -1,3 +1,4 @@
+import { infoRepost } from "../repositories/postsRepository.js";
 import { infoLikes } from "../repositories/timelineRepositories.js";
 
 export default async function handlePostsData(userLoggedId, postsData) {
@@ -27,7 +28,8 @@ export default async function handlePostsData(userLoggedId, postsData) {
             userId,
             postBody,
             postStatus,
-            infoLikes: await infoLikes(userLoggedId, postId)
+            infoLikes: await infoLikes(userLoggedId, postId),
+            infoRepost: await infoRepost(postId)
         };
     }
 

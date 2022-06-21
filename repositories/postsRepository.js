@@ -55,3 +55,21 @@ export async function sendRepost(userId, postId) {
         [postId, userId]
     );
 }
+
+export async function infoRepost(postId){
+    const repostResult = await db.query(
+        `SELECT COUNT(*) AS reposts
+        FROM "sharedPosts"
+        WHERE "postId" = $1`,
+        [postId]
+    );
+
+    let reposts;
+
+    if(repostResult.rowCount === 0){
+        reposts = 0;
+    } else{
+        reposts = repostResult.rows[0].reposts;
+    }
+    return reposts;
+}
