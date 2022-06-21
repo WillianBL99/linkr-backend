@@ -7,6 +7,15 @@ CREATE TABLE "users" (
 	"createdAt" timestamp NOT NULL DEFAULT NOW()
 ); 
 
+INSERT INTO "users" ("name", "password", "email")
+VALUES ('admin', 'admin', 'admin@admin.com');
+
+CREATE TABLE "followers" (
+	"id" serial NOT NULL PRIMARY KEY,
+	"followerId" INTEGER NOT NULL REFERENCES "users"("id"),
+	"followedId" INTEGER NOT NULL REFERENCES "users"("id"),
+);
+
 CREATE TABLE "sessions" (
 	"id" SERIAL PRIMARY KEY,
     "userId" INTEGER NOT NULL REFERENCES "users"("id"), 
@@ -42,6 +51,20 @@ CREATE TABLE "posts" (
 	"createdAt" timestamp NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE "comments" (
+	"id" serial NOT NULL PRIMARY KEY,
+	"userId" integer NOT NULL REFERENCES users(id),
+	"postId" integer NOT NULL REFERENCES posts(id),
+	"text" TEXT,
+	"createdAt" timestamp NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE "sharedPosts" (
+	"id" serial NOT NULL PRIMARY KEY,
+	"userId" integer NOT NULL REFERENCES users(id),
+	"postId" integer NOT NULL REFERENCES posts(id),
+	"createdAt" timestamp NOT NULL DEFAULT NOW()
+);
 
 CREATE TABLE "hashtags" (
 	"id" serial NOT NULL PRIMARY KEY,
@@ -61,3 +84,16 @@ CREATE TABLE "likesPosts" (
 	"postId" integer NOT NULL REFERENCES posts(id),
 	"userId" integer NOT NULL REFERENCES users(id)
 );
+
+-- DROP TABLE 
+--  "users",
+--  "follows",
+--  "sessions",
+--  "postStatus",
+--  "links",
+--  "posts",
+--  "comments",
+--  "sharedPosts",
+--  "hashtags",
+--  "hashtagsPosts",
+--  "likesPosts";
