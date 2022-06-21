@@ -1,4 +1,4 @@
-import { createHashtag, getHashtagByName, handleLikeRepository, infoLikes, insertHashtagsPost, postOnTimelineRepository } from "../repositories/timelineRepositories.js";
+import { handleLikeRepository } from "../repositories/timelineRepositories.js";
 import handlePostsData from "../utils/handlePostsData.js";
 
 export async function getTimeline(req, res) {

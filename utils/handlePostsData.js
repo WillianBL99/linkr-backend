@@ -1,9 +1,10 @@
 import { infoRepost } from "../repositories/postsRepository.js";
 import { infoLikes } from "../repositories/timelineRepositories.js";
+import { getConnectionFollow } from "../repositories/userRepositories.js";
 
 export default async function handlePostsData(userLoggedId, postsData) {
+    const posts = [];
     for (let i = 0; i<postsData.length; i++) {
-        const post = postsData[i];
     
         const {
             link,
@@ -15,13 +16,15 @@ export default async function handlePostsData(userLoggedId, postsData) {
             userId,
             postBody,
             postStatus,
-        } = post;
+        } = postsData[i];
 
         const metadata = { link, title, image: imageLink };
+        const connection = await getConnectionFollow(userId,userLoggedId); 
 
-        postsData[i] = {
+        posts.push({
             metadata,
             name,
+            following: connection ? true : false,
             isOwner: userLoggedId === userId,
             image,
             postId,
@@ -30,9 +33,8 @@ export default async function handlePostsData(userLoggedId, postsData) {
             postStatus,
             infoLikes: await infoLikes(userLoggedId, postId),
             infoRepost: await infoRepost(postId)
-        };
+        })
     }
 
-
-    return postsData;
+    return posts;
 }

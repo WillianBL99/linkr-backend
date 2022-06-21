@@ -1,6 +1,6 @@
 import SqlString from "sqlstring";
 
-import userRepository from "./../repositories/userRepositories.js";
+import userRepository, { followUserRepository, unfollowUserRepository } from "./../repositories/userRepositories.js";
 import { getPostsByFilter } from "../repositories/postsRepository.js";
 import { infoLikes } from "../repositories/timelineRepositories.js";
 import handlePostsData from "../utils/handlePostsData.js";
@@ -50,6 +50,24 @@ export async function getUsers(req, res) {
         res.status(200).send(users);
     } catch (error) {
         console.log(error);
+        res.sendStatus(500);
+    }
+}
+
+export async function followUser( req, res ) {
+    const { userId, followerId, follow } = res.locals.followData;
+
+    try {
+        if( follow ) {
+            await followUserRepository( userId, followerId );
+            res.status(201).send({ follow: true });
+        } else {
+            await unfollowUserRepository( userId, followerId );
+            res.status(204).send({ follow: false });
+        }
+
+    } catch (e) {
+        console.log('Error in followUser', e);
         res.sendStatus(500);
     }
 }

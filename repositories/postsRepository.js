@@ -36,7 +36,14 @@ export async function getPostsByFilter(filter) {
     return posts.rows;
 }
 
-//TRATAR CASO DE POST NÃO EXISTENTE?
+export async function getPostById(postId){
+    const post = await db.query(`SELECT * FROM "posts" WHERE id = $1`, [
+        postId,
+    ]);
+    
+    return  post.rows;
+}
+
 export async function postUpdate(postId, newText) {
     await db.query(
         `
