@@ -1,4 +1,5 @@
 import { infoLikes } from "../repositories/timelineRepositories.js";
+import { getConnectionFollow } from "../repositories/userRepositories.js";
 
 export default async function handlePostsData(userLoggedId, postsData) {
     const posts = [];
@@ -17,10 +18,12 @@ export default async function handlePostsData(userLoggedId, postsData) {
         } = postsData[i];
 
         const metadata = { link, title, image: imageLink };
+        const connection = await getConnectionFollow(userId,userLoggedId); 
 
         posts.push({
             metadata,
             name,
+            following: connection ? true : false,
             isOwner: userLoggedId === userId,
             image,
             postId,
