@@ -61,3 +61,10 @@ CREATE TABLE "likesPosts" (
 	"postId" integer NOT NULL REFERENCES posts(id),
 	"userId" integer NOT NULL REFERENCES users(id)
 );
+
+CREATE TABLE "reposts"(
+	"id" serial NOT NULL PRIMARY KEY,
+	"postId" integer NOT NULL REFERENCES posts(id),
+	"userId" integer NOT NULL REFERENCES users(id),
+	"createdAt" timestamp NOT NULL DEFAULT NOW()
+);

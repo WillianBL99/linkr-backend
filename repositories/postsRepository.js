@@ -36,13 +36,22 @@ export async function getPostsByFilter(filter) {
     return posts.rows;
 }
 
-
 //TRATAR CASO DE POST NÃO EXISTENTE?
 export async function postUpdate(postId, newText) {
-    await db.query(`
+    await db.query(
+        `
         UPDATE posts
         SET "postBody" = $1
         WHERE id = $2`,
-    [newText, postId]
+        [newText, postId]
+    );
+}
+
+export async function sendRepost(userId, postId) {
+    await db.query(
+        `INSERT INTO "sharedPosts"
+        ("postId", "userId")
+        VALUES ($1, $2)`,
+        [postId, userId]
     );
 }
