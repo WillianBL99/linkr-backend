@@ -37,7 +37,6 @@ export async function getPostsByFilter(filter) {
 }
 
 
-//TRATAR CASO DE POST NÃO EXISTENTE?
 export async function postUpdate(postId, newText) {
     await db.query(`
         UPDATE posts

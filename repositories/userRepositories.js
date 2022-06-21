@@ -66,8 +66,7 @@ const userRepostory = {
     getUserName,
     checkNameEmail,
     getUserById,
-    getUsersByName,
-    // getUserPosts
+    getUsersByName
 }
 
 export default userRepostory;
