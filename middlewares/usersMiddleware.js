@@ -1,10 +1,10 @@
 import { getConnectionFollow, getUserById } from "../repositories/userRepositories.js";
 
 export async function followUserMiddleware(req, res, next) {
-  const { userId } = req.params;
+  const userId = parseInt( req.params.userId );
   const { userId: followerId } = res.locals.tokenData;
   const { follow } = req.body;
-
+  
   if( !userId || isNaN( userId )) {
     return res.sendStatus( 422 );
   }

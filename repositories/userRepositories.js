@@ -62,8 +62,8 @@ export async function getUsersByName(filter){
 
 export async function getConnectionFollow(userId, followerId){
     const { rows: [ connection ] } = await db.query(
-        `SELECT * FROM connections
-        WHERE userId = $1 AND followerId = $2`,
+        `SELECT * FROM "followers"
+        WHERE "followedId" = $1 AND "followerId" = $2`,
         [userId, followerId]
     );
 
@@ -72,7 +72,7 @@ export async function getConnectionFollow(userId, followerId){
 
 export async function followUserRepository( userId, followerId ) {
     await db.query(
-        `INSERT INTO "followeres" ("followerId", "followedId")
+        `INSERT INTO "followers" ("followerId", "followedId")
         VALUES ($1, $2);`,
         [followerId, userId]
     );
@@ -82,7 +82,7 @@ export async function followUserRepository( userId, followerId ) {
 
 export async function unfollowUserRepository( userId, followerId ) {
     await db.query(
-        `DELETE FROM "followeres"
+        `DELETE FROM "followers"
         WHERE "followerId" = $1 AND "followedId" = $2;`,
         [followerId, userId]
     );

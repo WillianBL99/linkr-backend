@@ -10,7 +10,7 @@ CREATE TABLE "users" (
 INSERT INTO "users" ("name", "password", "email")
 VALUES ('admin', 'admin', 'admin@admin.com');
 
-CREATE TABLE "follows" (
+CREATE TABLE "followers" (
 	"id" serial NOT NULL PRIMARY KEY,
 	"followerId" INTEGER NOT NULL REFERENCES "users"("id"),
 	"followedId" INTEGER NOT NULL REFERENCES "users"("id"),
@@ -84,3 +84,16 @@ CREATE TABLE "likesPosts" (
 	"postId" integer NOT NULL REFERENCES posts(id),
 	"userId" integer NOT NULL REFERENCES users(id)
 );
+
+-- DROP TABLE 
+--  "users",
+--  "follows",
+--  "sessions",
+--  "postStatus",
+--  "links",
+--  "posts",
+--  "comments",
+--  "sharedPosts",
+--  "hashtags",
+--  "hashtagsPosts",
+--  "likesPosts";

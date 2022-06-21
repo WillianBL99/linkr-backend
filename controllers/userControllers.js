@@ -1,6 +1,6 @@
 import SqlString from "sqlstring";
 
-import userRepository from "./../repositories/userRepositories.js";
+import userRepository, { followUserRepository, unfollowUserRepository } from "./../repositories/userRepositories.js";
 import { getPostsByFilter } from "../repositories/postsRepository.js";
 import { infoLikes } from "../repositories/timelineRepositories.js";
 import handlePostsData from "../utils/handlePostsData.js";
@@ -59,10 +59,10 @@ export async function followUser( req, res ) {
 
     try {
         if( follow ) {
-            await userRepository.followUserMeddleware( userId, followerId );
+            await followUserRepository( userId, followerId );
             res.status(201).send({ follow: true });
         } else {
-            await userRepository.unfollowUserMeddleware( userId, followerId );
+            await unfollowUserRepository( userId, followerId );
             res.status(204).send({ follow: false });
         }
 
