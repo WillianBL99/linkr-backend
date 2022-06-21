@@ -1,8 +1,8 @@
 import { infoLikes } from "../repositories/timelineRepositories.js";
 
 export default async function handlePostsData(userLoggedId, postsData) {
+    const posts = [];
     for (let i = 0; i<postsData.length; i++) {
-        const post = postsData[i];
     
         const {
             link,
@@ -14,11 +14,11 @@ export default async function handlePostsData(userLoggedId, postsData) {
             userId,
             postBody,
             postStatus,
-        } = post;
+        } = postsData[i];
 
         const metadata = { link, title, image: imageLink };
 
-        postsData[i] = {
+        posts.push({
             metadata,
             name,
             isOwner: userLoggedId === userId,
@@ -28,9 +28,8 @@ export default async function handlePostsData(userLoggedId, postsData) {
             postBody,
             postStatus,
             infoLikes: await infoLikes(userLoggedId, postId)
-        };
+        });
     }
 
-
-    return postsData;
+    return posts;
 }
