@@ -60,6 +60,36 @@ export async function getUsersByName(filter){
     return users.rows;
 }
 
+export async function getConnectionFollow(userId, followerId){
+    const { rows: [ connection ] } = await db.query(
+        `SELECT * FROM connections
+        WHERE userId = $1 AND followerId = $2`,
+        [userId, followerId]
+    );
+
+    return connection;
+}
+
+export async function followUserRepository( userId, followerId ) {
+    await db.query(
+        `INSERT INTO "followeres" ("followerId", "followedId")
+        VALUES ($1, $2);`,
+        [followerId, userId]
+    );
+    
+    return;
+}
+
+export async function unfollowUserRepository( userId, followerId ) {
+    await db.query(
+        `DELETE FROM "followeres"
+        WHERE "followerId" = $1 AND "followedId" = $2;`,
+        [followerId, userId]
+    );
+
+    return;
+}
+
 const userRepostory = {
     createUser,
     getUserEmail,

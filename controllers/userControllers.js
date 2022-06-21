@@ -53,3 +53,21 @@ export async function getUsers(req, res) {
         res.sendStatus(500);
     }
 }
+
+export async function followUser( req, res ) {
+    const { userId, followerId, follow } = res.locals.followData;
+
+    try {
+        if( follow ) {
+            await userRepository.followUserMeddleware( userId, followerId );
+            res.status(201).send({ follow: true });
+        } else {
+            await userRepository.unfollowUserMeddleware( userId, followerId );
+            res.status(204).send({ follow: false });
+        }
+
+    } catch (e) {
+        console.log('Error in followUser', e);
+        res.sendStatus(500);
+    }
+}
