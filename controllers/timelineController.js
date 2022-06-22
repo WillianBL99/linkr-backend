@@ -2,12 +2,11 @@ import handlePostsData from "../utils/handlePostsData.js";
 
 export async function getTimeline(req, res) {
   try {
-    const { timelineQuery } = res.locals;
-    const { tokenData } = res.locals;
+    const { timelineQuery, tokenData: { userId } } = res.locals;
+    
+    const timeline = await handlePostsData( userId, timelineQuery );
 
-    const timeline = await handlePostsData(tokenData.userId, timelineQuery);
-
-    res.status(200).send(timeline);
+    res.status(200).send({ posts: timeline });
     
   } catch (e) {
     console.log("Error in getTimeline", e);

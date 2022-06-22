@@ -60,6 +60,28 @@ export async function getUsersByName(filter){
     return users.rows;
 }
 
+const userRepostory = {
+    createUser,
+    getUserEmail,
+    getUserName,
+    checkNameEmail,
+    getUserById,
+    getUsersByName
+}
+
+export default userRepostory;
+
+
+export async function getConnectionsFollow( userId ) {
+    const { rows: connections } = await db.query(
+        `SELECT * FROM followers
+        WHERE "followerId" = $1`,
+        [userId]
+    );
+    
+    return connections;
+}
+
 export async function getConnectionFollow(userId, followerId){
     const { rows: [ connection ] } = await db.query(
         `SELECT * FROM "followers"
@@ -89,14 +111,3 @@ export async function unfollowUserRepository( userId, followerId ) {
 
     return;
 }
-
-const userRepostory = {
-    createUser,
-    getUserEmail,
-    getUserName,
-    checkNameEmail,
-    getUserById,
-    getUsersByName
-}
-
-export default userRepostory;
