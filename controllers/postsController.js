@@ -1,5 +1,5 @@
 import { postDeleter, postUpdate } from "../repositories/postsRepository.js";
-import { likeRepository, unlinkeRepository } from "../repositories/timelineRepositories.js";
+import { infoLikes, likeRepository, unlinkeRepository } from "../repositories/timelineRepositories.js";
 import { getUserByPostId } from "./../repositories/postsRepository.js";
 
 export async function deletePost(req, res) {
@@ -42,8 +42,7 @@ export async function handleLike(req, res) {
         const {
             userId,
             postId,
-            liked,
-            likesPost
+            liked
         } = res.locals.likesData;
   
       if(liked) {
@@ -52,6 +51,8 @@ export async function handleLike(req, res) {
       } else {
         await likeRepository(userId, postId);
       }
+
+      const likesPost = await infoLikes(userId, postId);
 
       res.status(200).send(likesPost);
   

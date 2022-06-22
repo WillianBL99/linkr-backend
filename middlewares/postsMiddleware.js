@@ -1,5 +1,5 @@
 import { getPostById } from "../repositories/postsRepository.js";
-import { infoLikes, verifyLikeRepository } from "../repositories/timelineRepositories.js";
+import { verifyLikeRepository } from "../repositories/timelineRepositories.js";
 
 export async function handleLikeMiddleware(req, res, next) {
   try {
@@ -16,9 +16,8 @@ export async function handleLikeMiddleware(req, res, next) {
     }
     
     const liked = await verifyLikeRepository(userId, postId);
-    const likesPost = await infoLikes(userId, postId);
 
-    res.locals.likesData = { userId, postId, liked, likesPost };
+    res.locals.likesData = { userId, postId, liked };
     next();
     
   } catch (e) {
