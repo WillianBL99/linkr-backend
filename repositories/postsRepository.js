@@ -40,7 +40,6 @@ export async function getPostsByFilter( filter ) {
 export async function getAllPostsFromUsersFollowed( userId ) {
     const FILTER = `
         WHERE s.id != 3
-        AND f."followedId" IS NOT NULL
         AND f."followerId" = ${ userId }
     `;
 
