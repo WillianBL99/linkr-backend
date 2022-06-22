@@ -8,7 +8,6 @@ export async function getUserByPostId(postId) {
 }
 
 export async function postDeleter(postId) {
-    console.log("postDeleter", postId);
     await db.query(`UPDATE "posts" SET "statusId" = 3 WHERE id = $1`, [postId]);
 }
 
@@ -39,7 +38,11 @@ export async function getPostsByFilter( filter ) {
 }
 
 export async function getAllPostByUserLoggedAndFollowed() {
-    const FILTER = `WHERE s.id != 3 and f."followedId" IS NOT NULL OR u.id = 3`;
+    const FILTER = `
+        WHERE s.id != 3
+        AND f."followedId" IS NOT NULL
+    `;
+
     return await getPostsByFilter( FILTER );
 }
 

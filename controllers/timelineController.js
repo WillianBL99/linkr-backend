@@ -6,7 +6,7 @@ export async function getTimeline(req, res) {
     
     const timeline = await handlePostsData( userId, timelineQuery );
 
-    res.status(200).send(timeline);
+    res.status(200).send({ posts: timeline });
     
   } catch (e) {
     console.log("Error in getTimeline", e);
