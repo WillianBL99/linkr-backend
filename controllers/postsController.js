@@ -1,5 +1,5 @@
 import { postDeleter, postUpdate, getPostById } from "../repositories/postsRepository.js";
-import { getUserByPostId } from "./../repositories/postsRepository.js";
+import { infoLikes, likeRepository, unlinkeRepository } from "../repositories/timelineRepositories.js";
 
 export async function deletePost(req, res) {
     const { postId } = req.params;
@@ -52,3 +52,28 @@ export async function updatePost(req, res) {
         res.sendStatus(500);
     };
 }
+
+export async function handleLike(req, res) {
+    try {
+        const {
+            userId,
+            postId,
+            liked
+        } = res.locals.likesData;
+  
+      if(liked) {
+        await unlinkeRepository(userId, postId);
+        
+      } else {
+        await likeRepository(userId, postId);
+      }
+
+      const likesPost = await infoLikes(userId, postId);
+
+      res.status(200).send(likesPost);
+  
+    } catch (e) {
+      console.log("Error in handleLike", e);
+      res.sendStatus(500);    
+    }
+  }
