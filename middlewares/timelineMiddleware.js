@@ -38,8 +38,9 @@ export async function createPostMiddleware(req, res, next) {
 
 async function handlePostsLinks(link) {
   const metadata = await getMetadataUrl(link);
-  const linkId = await insertLink(link, metadata);
+  const defaultBody = { title: "", description: "", image: "" };
 
+  const linkId = await insertLink(link, metadata || defaultBody );
   return linkId;
 }
 
