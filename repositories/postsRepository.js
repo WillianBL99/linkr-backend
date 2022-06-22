@@ -7,15 +7,6 @@ export async function getUserByPostId(postId) {
     return user.rows[0];
 }
 
-export async function getPostById(postId) {
-    const { rows: [ post ] } = await db.query(
-        `SELECT * FROM "posts" WHERE id = $1`
-        , [ postId ]
-    );
-
-    return post;
-}
-
 export async function postDeleter(postId) {
     console.log("postDeleter", postId);
     await db.query(`UPDATE "posts" SET "statusId" = 3 WHERE id = $1`, [postId]);
@@ -43,6 +34,14 @@ export async function getPostsByFilter(filter) {
         `
     );
     return posts.rows;
+}
+
+export async function getPostById(postId){
+    const { rows: post } = await db.query(`SELECT * FROM "posts" WHERE id = $1`, [
+        postId,
+    ]);
+    
+    return  post;
 }
 
 

@@ -10,7 +10,7 @@ export async function handleLikeMiddleware(req, res, next) {
       return res.sendStatus(422);
     }
 
-    const post = await getPostById( postId );
+    const [ post ] = await getPostById( postId );
     if(!post) {
       return res.sendStatus(404);
     }
