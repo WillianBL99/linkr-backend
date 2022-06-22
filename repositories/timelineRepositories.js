@@ -40,40 +40,43 @@ export async function insertHashtagsPost(hashtagsValues) {
   `);
 }
 
-export async function handleLikeRepository(userId, postId, isLiked) {
-  const { rows: alreadyLiked } = await db.query(`
-    SELECT *
-    FROM "likesPosts"
-    WHERE "userId" = $1 AND "postId" = $2
-  `, [userId, postId]);  
-
-  if( alreadyLiked.length > 0 && !isLiked ) {
-    await db.query(`
-      DELETE FROM "likesPosts"
-      WHERE "userId" = $1 AND "postId" = $2
-    `, [userId, postId]);
-    
-  } else if( alreadyLiked.length === 0 && isLiked ) {
-    await db.query(`
-    INSERT INTO "likesPosts" ("userId", "postId")
+export async function likeRepository(userId, postId) {
+  await db.query(
+    `INSERT INTO "likesPosts" ("userId", "postId")
     VALUES ($1, $2)
-  `, [userId, postId]);
-  }
-
-  return await infoLikes(userId, postId);
+    `,[userId, postId]
+  );
 }
 
-export async function infoLikes(userId, postId) {
-  const {rows: [{ likes }]} = await db.query(`
-    SELECT COUNT(*) AS "likes"
-    FROM "likesPosts"
-    WHERE "postId" = $1
-  `, [postId]);
-
-  const {rows:liked} = await db.query(`
-    SELECT * FROM "likesPosts"
+export async function unlinkeRepository(userId, postId) {
+  await db.query(
+    `DELETE FROM "likesPosts"
     WHERE "userId" = $1 AND "postId" = $2
-  `, [userId, postId]);
+    `,[userId, postId]
+  );
+}
+
+export async function verifyLikeRepository(userId, postId) {
+  const { rows: liked } = await db.query(
+    `SELECT * FROM "likesPosts"
+    WHERE "userId" = $1 AND "postId" = $2
+    `,[userId, postId]
+  );
+
+  return liked.length > 0;
+}
+
+
+export async function infoLikes(userId, postId) {
+  const liked = await verifyLikeRepository(userId, postId);
+
+  const {rows: [{ likes }]} = await db.query(
+    `SELECT COUNT(*) AS "likes"
+     FROM "likesPosts"
+     WHERE "postId" = $1
+    `, [postId]
+  );
+
 
   const { rows: names } = await db.query(`
     SELECT u.name
@@ -89,7 +92,7 @@ export async function infoLikes(userId, postId) {
 
   return {
     likes, 
-    liked: liked.length > 0,
+    liked,
     namePeople
   };
 }

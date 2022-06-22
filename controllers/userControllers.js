@@ -1,14 +1,13 @@
 import SqlString from "sqlstring";
 
-import userRepository, { followUserRepository, unfollowUserRepository } from "./../repositories/userRepositories.js";
+import userRepository, { followUserRepository, getConnectionFollow, unfollowUserRepository } from "./../repositories/userRepositories.js";
 import { getPostsByFilter } from "../repositories/postsRepository.js";
-import { infoLikes } from "../repositories/timelineRepositories.js";
 import handlePostsData from "../utils/handlePostsData.js";
 
 export async function getUserPosts(req, res) {
     const id = parseInt(req.params.id);
-    const posts = req.query.posts;
-    const {tokenData} = res.locals
+    const { posts } = req.query;
+    const { userId } = res.locals.tokenData
 
     try {
         let user = await userRepository.getUserById(id);
@@ -18,8 +17,11 @@ export async function getUserPosts(req, res) {
             return;
         }
 
+        const connection = await getConnectionFollow(id, userId);
+        const body = {...user[0], following: connection ? true : false, isOwner: userId === id};
+
         if (posts === "false") {
-            res.status(200).send(user[0]);
+            res.status(200).send(body);
             return;
         }
 
@@ -27,9 +29,10 @@ export async function getUserPosts(req, res) {
 
         let userPosts = await getPostsByFilter(filter);
 
-        userPosts = await handlePostsData(tokenData.userId, userPosts);
+        userPosts = await handlePostsData( userId, userPosts );
         
         res.status(200).send(userPosts);
+        
     } catch (e) {
         console.log(e);
         res.sendStatus(500);

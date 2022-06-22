@@ -37,11 +37,11 @@ export async function getPostsByFilter(filter) {
 }
 
 export async function getPostById(postId){
-    const post = await db.query(`SELECT * FROM "posts" WHERE id = $1`, [
+    const { rows: post } = await db.query(`SELECT * FROM "posts" WHERE id = $1`, [
         postId,
     ]);
     
-    return  post.rows;
+    return  post;
 }
 
 export async function postUpdate(postId, newText) {

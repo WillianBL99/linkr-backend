@@ -1,18 +1,27 @@
-import { postDeleter, postUpdate, getPostById, sendRepost } from "../repositories/postsRepository.js";
-import { getUserByPostId } from "./../repositories/postsRepository.js";
+import {
+    postDeleter,
+    postUpdate,
+    getPostById,
+    sendRepost,
+} from "../repositories/postsRepository.js";
+import {
+    infoLikes,
+    likeRepository,
+    unlinkeRepository,
+} from "../repositories/timelineRepositories.js";
 
 export async function deletePost(req, res) {
     const { postId } = req.params;
     const { userId } = res.locals.tokenData;
-    
-    try{
 
-        if(!postId || isNaN(postId)) {
+    try {
+        if (!postId || isNaN(postId)) {
             return res.sendStatus(422);
         }
-        
+
         const checkPost = await getPostById(postId);
-        if (checkPost.length < 1) return res.status(404).send("Post does not exist");
+        if (checkPost.length < 1)
+            return res.status(404).send("Post does not exist");
 
         const validation = await getUserByPostId(postId);
         if (validation.userId !== userId)
@@ -30,16 +39,16 @@ export async function updatePost(req, res) {
     const { postId } = req.params;
     const { newText } = req.body;
     const { userId } = res.locals.tokenData;
-    
-    try{
 
-        if(!postId || isNaN(postId)) {
+    try {
+        if (!postId || isNaN(postId)) {
             return res.sendStatus(422);
         }
 
         const checkPost = await getPostById(postId);
-        console.log(checkPost)
-        if (checkPost.length < 1) return res.status(404).send("Post does not exist");
+        console.log(checkPost);
+        if (checkPost.length < 1)
+            return res.status(404).send("Post does not exist");
 
         const validation = await getUserByPostId(postId);
         if (validation.userId !== userId)
@@ -55,13 +64,34 @@ export async function updatePost(req, res) {
 }
 
 export async function repost(req, res) {
-    const { userId } = req.locals.tokenData;
+    const { userId } = res.locals.tokenData;
+    const {postId} = req.body;
 
     try {
         await sendRepost(userId, postId);
+        res.sendStatus(201);
     } catch (error) {
         console.log("Error sending repost", error);
         res.sendStatus(500);
+        return;
     }
-    res.sendStatus(201);
+}
+
+export async function handleLike(req, res) {
+    try {
+        const { userId, postId, liked } = res.locals.likesData;
+
+        if (liked) {
+            await unlinkeRepository(userId, postId);
+        } else {
+            await likeRepository(userId, postId);
+        }
+
+        const likesPost = await infoLikes(userId, postId);
+
+        res.status(200).send(likesPost);
+    } catch (e) {
+        console.log("Error in handleLike", e);
+        res.sendStatus(500);
+    }
 }
