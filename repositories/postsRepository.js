@@ -44,12 +44,39 @@ export async function getPostById(postId){
     return  post;
 }
 
-
 export async function postUpdate(postId, newText) {
-    await db.query(`
+    await db.query(
+        `
         UPDATE posts
         SET "postBody" = $1
         WHERE id = $2`,
-    [newText, postId]
+        [newText, postId]
     );
+}
+
+export async function sendRepost(userId, postId) {
+    await db.query(
+        `INSERT INTO "sharedPosts"
+        ("postId", "userId")
+        VALUES ($1, $2)`,
+        [postId, userId]
+    );
+}
+
+export async function infoRepost(postId){
+    const repostResult = await db.query(
+        `SELECT COUNT(*) AS reposts
+        FROM "sharedPosts"
+        WHERE "postId" = $1`,
+        [postId]
+    );
+
+    let reposts;
+
+    if(repostResult.rowCount === 0){
+        reposts = 0;
+    } else{
+        reposts = repostResult.rows[0].reposts;
+    }
+    return reposts;
 }
