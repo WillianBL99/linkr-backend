@@ -3,9 +3,8 @@ import { createHashtag, getHashtagByName, insertHashtagsPost, insertLink, postOn
 import getMetadataUrl from "../utils/getMetadataUrl.js";
 
 export async function getTimelineMiddleware(req, res, next) {
-  const filter = `WHERE p."statusId" <> 3`
   try {
-    const timeline = await getPostsByFilter(filter);
+    const timeline = await getPostsByFilter( FILTER );
     res.locals.timelineQuery = timeline;
     next();
 

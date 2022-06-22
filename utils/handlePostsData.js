@@ -1,3 +1,4 @@
+import { infoRepost } from "../repositories/postsRepository.js";
 import { infoLikes } from "../repositories/timelineRepositories.js";
 import { getConnectionFollow } from "../repositories/userRepositories.js";
 
@@ -30,8 +31,9 @@ export default async function handlePostsData(userLoggedId, postsData) {
             userId,
             postBody,
             postStatus,
-            infoLikes: await infoLikes(userLoggedId, postId)
-        });
+            infoLikes: await infoLikes(userLoggedId, postId),
+            infoRepost: await infoRepost(postId)
+        })
     }
 
     return posts;

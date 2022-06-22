@@ -85,6 +85,14 @@ CREATE TABLE "likesPosts" (
 	"userId" integer NOT NULL REFERENCES users(id)
 );
 
+<<<<<<< HEAD
+CREATE TABLE "reposts"(
+	"id" serial NOT NULL PRIMARY KEY,
+	"postId" integer NOT NULL REFERENCES posts(id),
+	"userId" integer NOT NULL REFERENCES users(id),
+	"createdAt" timestamp NOT NULL DEFAULT NOW()
+);
+=======
 -- DROP TABLE 
 --  "users",
 --  "follows",
@@ -97,3 +105,4 @@ CREATE TABLE "likesPosts" (
 --  "hashtags",
 --  "hashtagsPosts",
 --  "likesPosts";
+>>>>>>> main
