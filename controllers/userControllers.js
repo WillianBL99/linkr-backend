@@ -6,7 +6,7 @@ import handlePostsData from "../utils/handlePostsData.js";
 
 export async function getUserPosts(req, res) {
     const id = parseInt(req.params.id);
-    const { posts } = req.query;
+    const { posts, limit } = req.query;
     const { userId } = res.locals.tokenData
 
     try {
@@ -27,7 +27,7 @@ export async function getUserPosts(req, res) {
 
         const filter = `WHERE "userId" = ${SqlString.escape(id)} AND "statusId" <> 3`;
 
-        let userPosts = await getPostsByFilter(filter);
+        let userPosts = await getPostsByFilter(filter, limit);
 
         userPosts = await handlePostsData( userId, userPosts );
         
