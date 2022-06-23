@@ -12,7 +12,9 @@ export async function postDeleter(postId) {
     await db.query(`UPDATE "posts" SET "statusId" = 3 WHERE id = $1`, [postId]);
 }
 
-export async function getPostsByFilter(filter) {
+export async function getPostsByFilter( filter, limit ) {
+    //TODO: ver questão de limit=null
+    const limiter = limit || 20;
     const posts = await db.query(
         `SELECT 
             u.name, 
@@ -34,7 +36,7 @@ export async function getPostsByFilter(filter) {
         JOIN links l ON p."linkId" = l.id
         ${filter}
         ORDER BY p."createdAt" DESC
-        LIMIT 10`
+        LIMIT ${ limiter }`
     );
     return posts.rows;
 }
@@ -72,13 +74,13 @@ export async function getRepostsByFilter(filter) {
     return repostsInfo;
 }
 
-export async function getAllPostByUserLoggedAndFollowed() {
+export async function getAllPostsFromUsersFollowed( userId, limit ) {
     const FILTER = `
         WHERE s.id != 3
-        AND f."followedId" IS NOT NULL
+        AND f."followerId" = ${ userId }
     `;
 
-    const posts = await getPostsByFilter(FILTER);
+    const posts = await getPostsByFilter(FILTER, limit);
     const reposts = await getRepostsByFilter(FILTER);
     if(reposts.length > 0){
         for(let i = 0; i < reposts.length; i++) {

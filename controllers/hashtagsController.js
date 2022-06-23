@@ -22,13 +22,14 @@ export async function getHashtags(req, res) {
 export async function getHashtagPosts(req, res) {
     const { hashtag } = req.params;
     const { userId } = res.locals.tokenData;
+    const { limit } = req.query;
 
     const filter = `
     JOIN "hashtagsPosts" hp ON p.id=hp."postId"
     JOIN hashtags h ON hp."hashtagId"=h.id
     WHERE h.name = ${SqlString.escape(hashtag)} AND "statusId" <> 3`
     try {
-        const postRows = await getPostsByFilter(filter);
+        const postRows = await getPostsByFilter(filter, limit);
         const posts = await handlePostsData(userId, postRows);
 
         res.status(200).send(posts);

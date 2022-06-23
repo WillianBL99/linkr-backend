@@ -1,5 +1,3 @@
-import SqlString from "sqlstring";
-
 import userRepository, { followUserRepository, getConnectionFollow, unfollowUserRepository } from "./../repositories/userRepositories.js";
 import { getAllPostByUser, getPostsByFilter } from "../repositories/postsRepository.js";
 import handlePostsData from "../utils/handlePostsData.js";
@@ -7,7 +5,7 @@ import handlePostsData from "../utils/handlePostsData.js";
 export async function getUserPosts(req, res) {
     const id = parseInt(req.params.id);
     const { posts } = req.query;
-    const { userId } = res.locals.tokenData;
+    const { userId, limit } = res.locals.tokenData;
     const user = res.locals.user;
 
     try {
