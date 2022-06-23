@@ -11,7 +11,9 @@ export async function postDeleter(postId) {
     await db.query(`UPDATE "posts" SET "statusId" = 3 WHERE id = $1`, [postId]);
 }
 
-export async function getPostsByFilter( filter ) {
+export async function getPostsByFilter( filter, limit ) {
+    //TODO: ver questão de limit=null
+    const limiter = limit || 20;
     const posts = await db.query(
         `SELECT 
             u.name, 
@@ -32,18 +34,18 @@ export async function getPostsByFilter( filter ) {
         JOIN links l ON p."linkId" = l.id
         ${ filter }
         ORDER BY p."createdAt" DESC
-        LIMIT 10`
+        LIMIT ${ limiter }`
     );
     return posts.rows;
 }
 
-export async function getAllPostsFromUsersFollowed( userId ) {
+export async function getAllPostsFromUsersFollowed( userId, limit ) {
     const FILTER = `
         WHERE s.id != 3
         AND f."followerId" = ${ userId }
     `;
 
-    return await getPostsByFilter( FILTER );
+    return await getPostsByFilter( FILTER, limit );
 }
 
 export async function getPostById(postId){
