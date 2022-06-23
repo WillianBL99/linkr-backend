@@ -49,7 +49,7 @@ export async function numberPostsHashtag(req, res) {
       const numberOfPosts = await getNumberOfPosts(filter);
       res.status(200).send(numberOfPosts[0]);
     } catch (e) {
-      console.log("Error getting number of posts timeline", e);
+      console.log("Error getting number of posts hashtags", e);
       res.sendStatus(500);    
     }
   } 
