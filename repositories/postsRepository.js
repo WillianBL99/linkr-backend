@@ -116,13 +116,6 @@ export async function getNumberPostsTimeLine(userId) {
     return await getNumberOfPosts( FILTER );
 }
 
-export async function getPostById(postId){
-    const { rows: post } = await db.query(`SELECT * FROM "posts" WHERE id = $1`, [
-        postId,
-    ]);
-    
-    return  post;
-}
 
 export async function getAllPostByUser(id){
     const FILTER = `WHERE u.id = ${SqlString.escape(id)} AND p."statusId" != 3`;
@@ -146,6 +139,9 @@ export async function getPostById(postId) {
 
     return post;
 }
+
+
+
 
 export async function postUpdate(postId, newText) {
     await db.query(
