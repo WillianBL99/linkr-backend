@@ -1,3 +1,4 @@
+import SqlString from "sqlstring";
 import db from "./../config/db.js";
 
 export async function getUserByPostId(postId) {
@@ -11,13 +12,14 @@ export async function postDeleter(postId) {
     await db.query(`UPDATE "posts" SET "statusId" = 3 WHERE id = $1`, [postId]);
 }
 
-export async function getPostsByFilter( filter ) {
+export async function getPostsByFilter(filter) {
     const posts = await db.query(
         `SELECT 
             u.name, 
             u.image, 
             p.id AS "postId", 
             p."userId", 
+            p."createdAt",
             COALESCE(p."postBody", '') AS "postBody",
             s.name AS "postStatus",
             l.link,
@@ -30,11 +32,44 @@ export async function getPostsByFilter( filter ) {
         JOIN  posts p ON u.id = p."userId"
         JOIN "postStatus" s ON p."statusId" = s.id
         JOIN links l ON p."linkId" = l.id
-        ${ filter }
+        ${filter}
         ORDER BY p."createdAt" DESC
         LIMIT 10`
     );
     return posts.rows;
+}
+
+export async function getRepostsByFilter(filter) {
+    const repostsResult = await db.query(
+        `SELECT sp."userId", sp."createdAt", sp."postId", u.id, u.name 
+        FROM followers f
+        RIGHT JOIN users u ON f."followedId" = u.id
+        JOIN "sharedPosts" sp ON sp."userId" = u.id
+        JOIN posts p ON p.id = sp."postId"
+        JOIN "postStatus" s ON s.id = p."statusId"
+        ${filter}`
+    );
+
+    const reposts = repostsResult.rows;
+    const repostsInfo = [];
+    for (let i = 0; i < reposts.length; i++) {
+        const postId = reposts[i].postId;
+        const filter = `WHERE p.id = ${postId} AND s.id != 3`;
+        const post = await getPostsByFilter(filter);
+
+        if (post.length > 0) {
+            repostsInfo.push({
+                ...post[0],
+                repostInfo: {
+                    userId: reposts[i].userId,
+                    userName: reposts[i].name,
+                },
+                createdAt: reposts[i].createdAt,}
+            );
+        }
+    }
+
+    return repostsInfo;
 }
 
 export async function getAllPostByUserLoggedAndFollowed() {
@@ -43,15 +78,38 @@ export async function getAllPostByUserLoggedAndFollowed() {
         AND f."followedId" IS NOT NULL
     `;
 
-    return await getPostsByFilter( FILTER );
+    const posts = await getPostsByFilter(FILTER);
+    const reposts = await getRepostsByFilter(FILTER);
+    if(reposts.length > 0){
+        for(let i = 0; i < reposts.length; i++) {
+            posts.push(reposts[i]);
+        }
+    }
+
+    return posts
 }
 
-export async function getPostById(postId){
-    const { rows: post } = await db.query(`SELECT * FROM "posts" WHERE id = $1`, [
-        postId,
-    ]);
-    
-    return  post;
+export async function getAllPostByUser(id){
+    const FILTER = `WHERE u.id = ${SqlString.escape(id)} AND p."statusId" != 3`;
+
+    const posts = await getPostsByFilter(FILTER);
+    const reposts = await getRepostsByFilter(FILTER);
+    if(reposts.length > 0){
+        for(let i = 0; i < reposts.length; i++) {
+            posts.push(reposts[i]);
+        }
+    }
+
+    return posts;
+}
+
+export async function getPostById(postId) {
+    const { rows: post } = await db.query(
+        `SELECT * FROM "posts" WHERE id = $1`,
+        [postId]
+    );
+
+    return post;
 }
 
 export async function postUpdate(postId, newText) {
@@ -73,7 +131,7 @@ export async function sendRepost(userId, postId) {
     );
 }
 
-export async function infoRepost(postId){
+export async function infoRepost(postId) {
     const repostResult = await db.query(
         `SELECT COUNT(*) AS reposts
         FROM "sharedPosts"
@@ -83,9 +141,9 @@ export async function infoRepost(postId){
 
     let reposts;
 
-    if(repostResult.rowCount === 0){
+    if (repostResult.rowCount === 0) {
         reposts = 0;
-    } else{
+    } else {
         reposts = repostResult.rows[0].reposts;
     }
     return reposts;

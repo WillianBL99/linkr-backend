@@ -1,6 +1,6 @@
 import {Router} from 'express';
 import { validateSchema } from '../middlewares/schemaValidator.js';
-import { followUserMiddleware } from '../middlewares/usersMiddleware.js';
+import { followUserMiddleware, validateUserMiddleware } from '../middlewares/usersMiddleware.js';
 import followSchema from '../schemas/followSchema.js';
 
 import { followUser, getUserPosts, getUsers } from './../controllers/userControllers.js';
@@ -10,7 +10,7 @@ const userRouter = Router();
 
 userRouter.use( validateToken );
 
-userRouter.get("/user/:id", getUserPosts);
+userRouter.get("/user/:id", validateUserMiddleware, getUserPosts);
 userRouter.get("/users/:name", getUsers);
 userRouter.post(
   "/users/:userId/follow",
