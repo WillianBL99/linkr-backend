@@ -101,13 +101,7 @@ export async function handleLike(req, res) {
 export async function commentOnPost( req, res ) {
     try {
         const { userId } = res.locals.tokenData;
-        const { commentText } = req.body;
-        const postId = parseInt( req.params.postId );
-
-        const [ post ] = await getPostById( postId );
-        if( !post ) {
-            return res.sendStatus( 404 );
-        }
+        const { postId, commentText } = res.locals.commentData;
 
         const comments = await commentOnPostRepository( postId, userId, commentText );
 

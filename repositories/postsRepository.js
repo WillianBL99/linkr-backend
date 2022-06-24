@@ -191,7 +191,6 @@ export async function commentOnPostRepository( postId, userId, commentText ) {
 }
 
 export async function getCommentsByPostId( userId, postId ) {
-    console.log(userId, postId)
     const { rows: comments } = await db.query(
         `SELECT 
             u.id,
@@ -211,7 +210,6 @@ export async function getCommentsByPostId( userId, postId ) {
         WHERE c."postId" = $2`,
         [ userId, postId ]
     );
-    console.log(comments)
 
     return comments;
 }

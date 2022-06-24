@@ -25,3 +25,26 @@ export async function handleLikeMiddleware(req, res, next) {
     res.sendStatus(500);
   }
 }
+
+export async function commentOnPostMiddleware( req, res, next ) {
+  try {
+    const { commentText } = req.body;
+    const postId = parseInt( req.params.postId );
+
+    if( !postId || isNaN( postId )) {
+      return res.sendStatus( 422 );
+    }
+
+    const [ post ] = await getPostById( postId );
+    if( !post ) {
+        return res.sendStatus( 404 );
+    }
+
+    res.locals.commentData = { commentText, postId };
+    next();
+    
+  } catch ( e ) {
+    console.log( e );
+    res.sendStatus( 500 );
+  }
+}
