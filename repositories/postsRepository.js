@@ -200,8 +200,8 @@ export async function getPostCommentsRepository(userId, postId) {
             CASE
                 WHEN c."userId" = p."userId"  THEN 'author'
                 WHEN EXISTS (
-                    select 1 from followers f2
-                    where f2."followerId" = $1 and f2."followedId" = u.id
+                    SELECT 1 FROM followers f2
+                    WHERE f2."followerId" = $1 and f2."followedId" = u.id
                 ) THEN 'following'
                 ELSE ''
             END AS "state"

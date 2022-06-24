@@ -5,15 +5,12 @@ CREATE TABLE "users" (
 	"email" TEXT NOT NULL UNIQUE,
 	"image" TEXT,
 	"createdAt" timestamp NOT NULL DEFAULT NOW()
-); 
-
-INSERT INTO "users" ("name", "password", "email")
-VALUES ('admin', 'admin', 'admin@admin.com');
+);
 
 CREATE TABLE "followers" (
 	"id" serial NOT NULL PRIMARY KEY,
 	"followerId" INTEGER NOT NULL REFERENCES "users"("id"),
-	"followedId" INTEGER NOT NULL REFERENCES "users"("id"),
+	"followedId" INTEGER NOT NULL REFERENCES "users"("id")
 );
 
 CREATE TABLE "sessions" (
@@ -85,17 +82,16 @@ CREATE TABLE "likesPosts" (
 	"userId" integer NOT NULL REFERENCES users(id)
 );
 
-<<<<<<< HEAD
 CREATE TABLE "reposts"(
 	"id" serial NOT NULL PRIMARY KEY,
 	"postId" integer NOT NULL REFERENCES posts(id),
 	"userId" integer NOT NULL REFERENCES users(id),
 	"createdAt" timestamp NOT NULL DEFAULT NOW()
 );
-=======
+
 -- DROP TABLE 
 --  "users",
---  "follows",
+--  "followers",
 --  "sessions",
 --  "postStatus",
 --  "links",
@@ -105,4 +101,3 @@ CREATE TABLE "reposts"(
 --  "hashtags",
 --  "hashtagsPosts",
 --  "likesPosts";
->>>>>>> main
