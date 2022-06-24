@@ -4,8 +4,7 @@ import { getConnectionFollow } from "../repositories/userRepositories.js";
 
 export default async function handlePostsData(userLoggedId, postsData) {
     const posts = [];
-    for (let i = 0; i<postsData.length; i++) {
-    
+    for (let i = 0; i < postsData.length; i++) {
         const {
             link,
             title,
@@ -16,10 +15,14 @@ export default async function handlePostsData(userLoggedId, postsData) {
             userId,
             postBody,
             postStatus,
+            createdAt,
         } = postsData[i];
 
         const metadata = { link, title, image: imageLink };
-        const connection = await getConnectionFollow(userId,userLoggedId); 
+        const connection = await getConnectionFollow(userId, userLoggedId);
+        let repostInfo = postsData[i].repostInfo
+            ? postsData[i].repostInfo
+            : false;
 
         posts.push({
             metadata,
@@ -32,9 +35,13 @@ export default async function handlePostsData(userLoggedId, postsData) {
             postBody,
             postStatus,
             infoLikes: await infoLikes(userLoggedId, postId),
-            infoRepost: await infoRepost(postId)
-        })
+            reposts: await infoRepost(postId),
+            repostInfo,
+            createdAt,
+        });
     }
+
+    posts.sort((a, b) => (a.createdAt >= b.createdAt ? -1 : 1));
 
     return posts;
 }

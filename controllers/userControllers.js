@@ -1,33 +1,23 @@
-import SqlString from "sqlstring";
-
 import userRepository, { followUserRepository, getConnectionFollow, unfollowUserRepository } from "./../repositories/userRepositories.js";
-import { getPostsByFilter } from "../repositories/postsRepository.js";
+import { getAllPostByUser, getPostsByFilter, getNumberOfPosts } from "../repositories/postsRepository.js";
 import handlePostsData from "../utils/handlePostsData.js";
 
 export async function getUserPosts(req, res) {
     const id = parseInt(req.params.id);
     const { posts } = req.query;
-    const { userId } = res.locals.tokenData
+    const { userId, limit } = res.locals.tokenData;
+    const user = res.locals.user;
 
     try {
-        let user = await userRepository.getUserById(id);
-
-        if (user.length === 0) {
-            res.sendStatus(404);
-            return;
-        }
-
         const connection = await getConnectionFollow(id, userId);
-        const body = {...user[0], following: connection ? true : false, isOwner: userId === id};
-
+        
         if (posts === "false") {
+            const body = {...user[0], following: connection ? true : false, isOwner: userId === id};
             res.status(200).send(body);
             return;
         }
 
-        const filter = `WHERE "userId" = ${SqlString.escape(id)} AND "statusId" <> 3`;
-
-        let userPosts = await getPostsByFilter(filter);
+        let userPosts = await getAllPostByUser(id);
 
         userPosts = await handlePostsData( userId, userPosts );
         
@@ -72,5 +62,17 @@ export async function followUser( req, res ) {
     } catch (e) {
         console.log('Error in followUser', e);
         res.sendStatus(500);
+    }
+}
+
+export async function getNumberPostsUser(req, res) {
+    const id = parseInt(req.params.id);
+    try{
+        const filter = `WHERE "userId" = ${SqlString.escape(id)} AND "statusId" <> 3`;
+        const numberOfPosts = await getNumberOfPosts(filter);
+        res.status(200).send(numberOfPosts[0]);
+    } catch (e) {
+        console.log("Error getting number of posts user id", e);
+        res.sendStatus(500);    
     }
 }

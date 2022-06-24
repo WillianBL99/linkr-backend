@@ -1,4 +1,4 @@
-import { getAllPostByUserLoggedAndFollowed } from "../repositories/postsRepository.js";
+import { getAllPostsFromUsersFollowed } from "../repositories/postsRepository.js";
 import { createHashtag, getHashtagByName, insertHashtagsPost, insertLink, postOnTimelineRepository } from "../repositories/timelineRepositories.js";
 import { getConnectionsFollow } from "../repositories/userRepositories.js";
 import getMetadataUrl from "../utils/getMetadataUrl.js";
@@ -6,12 +6,14 @@ import getMetadataUrl from "../utils/getMetadataUrl.js";
 export async function getTimelineMiddleware(req, res, next) {
   try {
     const { userId } = res.locals.tokenData;
-    const timeline = await getAllPostByUserLoggedAndFollowed( userId );
+    const { limit } = req.query;
+
+    const timeline = await getAllPostsFromUsersFollowed( userId, limit );
 
     if(!timeline.length) {
       const connections = await getConnectionsFollow( userId );
       const timelineData = { posts: [], followingSomeone: connections.length > 0 };
-      console.log("timelineData", timelineData);
+      
       return res.status(200).send( timelineData );
     }
 
