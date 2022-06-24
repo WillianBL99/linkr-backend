@@ -195,8 +195,9 @@ export async function getCommentsByPostId( userId, postId ) {
     const { rows: comments } = await db.query(
         `SELECT 
             u.id,
-            u.name, 
-            c."text",
+            u.name,
+            u.image, 
+            c."text" AS "commentText",
             CASE
                 WHEN c."userId" = p."userId"  THEN 'author'
                 WHEN EXISTS (
