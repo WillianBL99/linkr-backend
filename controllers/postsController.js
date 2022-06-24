@@ -3,10 +3,12 @@ import {
     postUpdate,
     getPostById,
     sendRepost,
+    commentOnPostRepository,
 } from "../repositories/postsRepository.js";
 import {
     infoLikes,
     likeRepository,
+    postOnTimelineRepository,
     unlinkeRepository,
 } from "../repositories/timelineRepositories.js";
 
@@ -98,15 +100,18 @@ export async function handleLike(req, res) {
 
 export async function commentOnPost( req, res ) {
     try {
-        const { userId } = res.locals.postBody;
-        const { postId } = req.params;
+        const { userId } = res.locals.tokenData;
+        const { commentText } = req.body;
+        const postId = parseInt( req.params.postId );
 
-        const [ post ] = getPostById( postId );
+        const [ post ] = await getPostById( postId );
         if( !post ) {
-            res.sendStatus( 404 );
+            return res.sendStatus( 404 );
         }
 
-        
+        const comments = await commentOnPostRepository( postId, userId, commentText );
+
+        res.status( 200 ).send( comments );
 
     } catch ( e ) {
         console.log( e );

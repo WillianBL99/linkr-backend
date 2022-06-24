@@ -187,11 +187,31 @@ export async function commentOnPostRepository( postId, userId, commentText ) {
         [ postId, userId, commentText ]
     );
 
-    return getCommentsByPostId( postId );
+    return await getCommentsByPostId( userId, postId );
 }
 
-export async function getCommentsByPostId( postId ) {
+export async function getCommentsByPostId( userId, postId ) {
+    console.log(userId, postId)
     const { rows: comments } = await db.query(
-        `SELECT u.name`
-    )
+        `SELECT 
+            u.id,
+            u.name, 
+            c."text",
+            CASE
+                WHEN c."userId" = p."userId"  THEN 'author'
+                WHEN EXISTS (
+                    select 1 from followers f2
+                    where f2."followerId" = $1 and f2."followedId" = u.id
+                ) THEN 'following'
+                ELSE ''
+            END AS "state"
+        FROM "comments" c
+        JOIN "users" u ON c."userId" = u.id
+        JOIN "posts" p ON c."postId" = p.id
+        WHERE c."postId" = $2`,
+        [ userId, postId ]
+    );
+    console.log(comments)
+
+    return comments;
 }
