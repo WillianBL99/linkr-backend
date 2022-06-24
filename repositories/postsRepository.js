@@ -14,7 +14,7 @@ export async function postDeleter(postId) {
 
 export async function getPostsByFilter( filter, limit ) {
     //TODO: ver questão de limit=null
-    const limiter = limit || 20;
+    const limiter = limit;
     const posts = await db.query(
         `SELECT 
             u.name, 
@@ -41,6 +41,22 @@ export async function getPostsByFilter( filter, limit ) {
     return posts.rows;
 }
 
+export async function getNumberOfPosts( filter ) {
+    //TODO: ver questão de limit=null
+    const posts = await db.query(
+        `SELECT COUNT (*)  
+        FROM followers f
+        JOIN users flwed ON f."followedId" = flwed.id
+        JOIN users flw ON f."followerId" = flw.id
+        RIGHT JOIN users u ON f."followedId" = u.id
+        JOIN  posts p ON u.id = p."userId"
+        JOIN "postStatus" s ON p."statusId" = s.id
+        JOIN links l ON p."linkId" = l.id
+        ${ filter }
+        `
+    );
+    return posts.rows;
+}
 export async function getRepostsByFilter(filter) {
     const repostsResult = await db.query(
         `SELECT sp."userId", sp."createdAt", sp."postId", u.id, u.name 
@@ -91,6 +107,16 @@ export async function getAllPostsFromUsersFollowed( userId, limit ) {
     return posts
 }
 
+export async function getNumberPostsTimeLine(userId) {
+    const FILTER = `
+        WHERE s.id != 3
+        AND f."followerId" = ${ userId }
+    `;
+
+    return await getNumberOfPosts( FILTER );
+}
+
+
 export async function getAllPostByUser(id){
     const FILTER = `WHERE u.id = ${SqlString.escape(id)} AND p."statusId" != 3`;
 
@@ -113,6 +139,9 @@ export async function getPostById(postId) {
 
     return post;
 }
+
+
+
 
 export async function postUpdate(postId, newText) {
     await db.query(

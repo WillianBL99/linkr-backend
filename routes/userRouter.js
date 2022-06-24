@@ -3,7 +3,7 @@ import { validateSchema } from '../middlewares/schemaValidator.js';
 import { followUserMiddleware, validateUserMiddleware } from '../middlewares/usersMiddleware.js';
 import followSchema from '../schemas/followSchema.js';
 
-import { followUser, getUserPosts, getUsers } from './../controllers/userControllers.js';
+import { followUser, getUserPosts, getUsers, getNumberPostsUser } from './../controllers/userControllers.js';
 import { validateToken } from './../middlewares/authMiddleware.js';
 
 const userRouter = Router();
@@ -18,5 +18,6 @@ userRouter.post(
   followUserMiddleware, 
   followUser
 );
+userRouter.get("/user/:id/number", getNumberPostsUser);
 
 export default userRouter;
