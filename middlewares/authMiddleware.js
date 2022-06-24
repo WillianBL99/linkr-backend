@@ -19,7 +19,6 @@ export const validateToken = async (req, res, next) => {
         const tokenData = jwt.verify(token, secret);
         const { userId } = tokenData;
         res.locals.tokenData = {userId};
-  
         next();
 
     } catch (error) {

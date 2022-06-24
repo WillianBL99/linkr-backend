@@ -120,9 +120,9 @@ export async function getNumberPostsTimeLine(userId) {
 
 export async function getAllPostByUser(id, limit ){
     const FILTER = `WHERE u.id = ${SqlString.escape(id)} AND p."statusId" != 3`;
+    const posts = await getPostsByFilter(FILTER, limit);
 
-    const posts = await getPostsByFilter(FILTER, limit );
-    const reposts = await getRepostsByFilter(FILTER);
+    const reposts = await getRepostsByFilter(FILTER, limit);
     if(reposts.length > 0){
         for(let i = 0; i < reposts.length; i++) {
             posts.push(reposts[i]);

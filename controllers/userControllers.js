@@ -6,9 +6,8 @@ import SqlString from "sqlstring";
 
 export async function getUserPosts(req, res) {
     const id = parseInt(req.params.id);
-    const { posts } = req.query;
+    const { posts, limit } = req.query;
     const { userId } = res.locals.tokenData;
-    const limit = parseInt( req.query.limit );
     const user = res.locals.user;
 
     try {
@@ -73,7 +72,7 @@ export async function followUser( req, res ) {
 export async function getNumberPostsUser(req, res) {
     const id = parseInt(req.params.id);
     try{
-        const filter = `WHERE p."userId" = ${sqlstring.escape(id)} AND "statusId" <> 3`;
+        const filter = `WHERE p."userId" = ${SqlString.escape(id)} AND "statusId" <> 3`;
         const numberOfPosts = await getNumberOfPosts(filter);
         res.status(200).send(numberOfPosts[0]);
     } catch (e) {
