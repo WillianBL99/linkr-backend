@@ -31,11 +31,13 @@ export async function getUserPosts(req, res) {
 
 export async function getUsers(req, res) {
     const { name } = req.params;
+    const {userId} = res.locals.tokenData;
 
     const filter = name + "%";
 
     try {
-        const users = await userRepository.getUsersByName(filter);
+        const users = await userRepository.getUsersByNameOrderedByFollowing(userId, filter);
+
         if (users.length === 0) {
             res.sendStatus(404);
             return;
