@@ -3,10 +3,12 @@ import { getAllPostByUser, getPostsByFilter, getNumberOfPosts } from "../reposit
 import handlePostsData from "../utils/handlePostsData.js";
 import SqlString from "sqlstring";
 
+
 export async function getUserPosts(req, res) {
     const id = parseInt(req.params.id);
     const { posts } = req.query;
-    const { userId, limit } = res.locals.tokenData;
+    const { userId } = res.locals.tokenData;
+    const limit = parseInt( req.query.limit );
     const user = res.locals.user;
 
     try {
@@ -18,8 +20,8 @@ export async function getUserPosts(req, res) {
             return;
         }
 
-        let userPosts = await getAllPostByUser(id);
-
+        let userPosts = await getAllPostByUser(id, limit);
+        
         userPosts = await handlePostsData( userId, userPosts );
         
         res.status(200).send(userPosts);
@@ -71,7 +73,7 @@ export async function followUser( req, res ) {
 export async function getNumberPostsUser(req, res) {
     const id = parseInt(req.params.id);
     try{
-        const filter = `WHERE "userId" = ${SqlString.escape(id)} AND "statusId" <> 3`;
+        const filter = `WHERE p."userId" = ${sqlstring.escape(id)} AND "statusId" <> 3`;
         const numberOfPosts = await getNumberOfPosts(filter);
         res.status(200).send(numberOfPosts[0]);
     } catch (e) {

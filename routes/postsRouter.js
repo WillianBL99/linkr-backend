@@ -9,9 +9,12 @@ import {
     repost,
     handleLike,
     updatePost,
+    commentOnPost,
+    getPostComments,
 } from "../controllers/postsController.js";
 import repostSchema from "../schemas/repostSchema.js";
-import { handleLikeMiddleware } from "../middlewares/postsMiddleware.js";
+import { getAndPostCommentsMiddleware, handleLikeMiddleware } from "../middlewares/postsMiddleware.js";
+import { commentSchema } from "../schemas/postSchemas.js";
 
 const postsRouter = Router();
 
@@ -21,5 +24,12 @@ postsRouter.delete("/posts/:postId", deletePost);
 postsRouter.put("/posts/:postId", validateSchema(editSchema), updatePost);
 postsRouter.post("/repost", validateSchema(repostSchema), repost);
 postsRouter.post("/posts/:id/like", handleLikeMiddleware, handleLike);
+postsRouter.post(
+    "/posts/:postId/comment", 
+    validateSchema( commentSchema ), 
+    getAndPostCommentsMiddleware,
+    commentOnPost
+);
+postsRouter.get("/posts/:postId/comments",getAndPostCommentsMiddleware, getPostComments);
 
 export default postsRouter;

@@ -6,8 +6,8 @@ import getMetadataUrl from "../utils/getMetadataUrl.js";
 export async function getTimelineMiddleware(req, res, next) {
   try {
     const { userId } = res.locals.tokenData;
-    const { limit } = req.query;
-
+    const limit = parseInt( req.query.limit );
+    
     const timeline = await getAllPostsFromUsersFollowed( userId, limit );
 
     if(!timeline.length) {

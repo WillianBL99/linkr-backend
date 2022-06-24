@@ -3,10 +3,13 @@ import {
     postUpdate,
     getPostById,
     sendRepost,
+    commentOnPostRepository,
+    getPostCommentsRepository,
 } from "../repositories/postsRepository.js";
 import {
     infoLikes,
     likeRepository,
+    postOnTimelineRepository,
     unlinkeRepository,
 } from "../repositories/timelineRepositories.js";
 
@@ -93,5 +96,35 @@ export async function handleLike(req, res) {
     } catch (e) {
         console.log("Error in handleLike", e);
         res.sendStatus(500);
+    }
+}
+
+export async function commentOnPost( req, res ) {
+    try {
+        const { userId } = res.locals.tokenData;
+        const { postId, commentText } = res.locals.commentData;
+
+        const comments = await commentOnPostRepository( postId, userId, commentText );
+
+        res.status( 200 ).send( comments );
+
+    } catch ( e ) {
+        console.log( e );
+        res.sendStatus( 500 );
+    }
+}
+
+export async function getPostComments( req, res ) {
+    try {
+        const { postId } = res.locals.commentData;
+        const { userId } = res.locals.tokenData;
+
+        const comments = await getPostCommentsRepository( userId, postId );
+
+        res.status( 200 ).send( comments );
+
+    } catch ( e ) {
+        console.log( e );
+        res.sendStatus( 500 );
     }
 }

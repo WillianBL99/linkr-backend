@@ -1,8 +1,8 @@
-import { infoRepost } from "../repositories/postsRepository.js";
+import { getPostCommentsRepository, infoRepost } from "../repositories/postsRepository.js";
 import { infoLikes } from "../repositories/timelineRepositories.js";
 import { getConnectionFollow } from "../repositories/userRepositories.js";
 
-export default async function handlePostsData(userLoggedId, postsData) {
+export default async function handlePostsData( userLoggedId, postsData ) {
     const posts = [];
     for (let i = 0; i < postsData.length; i++) {
         const {
@@ -19,10 +19,9 @@ export default async function handlePostsData(userLoggedId, postsData) {
         } = postsData[i];
 
         const metadata = { link, title, image: imageLink };
-        const connection = await getConnectionFollow(userId, userLoggedId);
-        let repostInfo = postsData[i].repostInfo
-            ? postsData[i].repostInfo
-            : false;
+        const connection = await getConnectionFollow( userId, userLoggedId );
+        const comments = await getPostCommentsRepository( userLoggedId, postId );
+        const repostInfo = postsData[i].repostInfo || false;
 
         posts.push({
             metadata,
@@ -35,6 +34,7 @@ export default async function handlePostsData(userLoggedId, postsData) {
             postBody,
             postStatus,
             infoLikes: await infoLikes(userLoggedId, postId),
+            qtdComments: comments.length,
             reposts: await infoRepost(postId),
             repostInfo,
             createdAt,
