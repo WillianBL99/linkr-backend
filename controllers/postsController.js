@@ -49,7 +49,6 @@ export async function updatePost(req, res) {
 
     try {
         const checkPost = await getPostById(postId);
-        console.log(checkPost);
         if (checkPost.length < 1)
             return res.status(404).send("Post does not exist");
 
