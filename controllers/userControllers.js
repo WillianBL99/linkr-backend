@@ -1,7 +1,8 @@
 import userRepository, { followUserRepository, getConnectionFollow, unfollowUserRepository } from "./../repositories/userRepositories.js";
 import { getAllPostByUser, getPostsByFilter, getNumberOfPosts } from "../repositories/postsRepository.js";
 import handlePostsData from "../utils/handlePostsData.js";
-import sqlstring from "sqlstring";
+import SqlString from "sqlstring";
+
 
 export async function getUserPosts(req, res) {
     const id = parseInt(req.params.id);
@@ -33,11 +34,13 @@ export async function getUserPosts(req, res) {
 
 export async function getUsers(req, res) {
     const { name } = req.params;
+    const {userId} = res.locals.tokenData;
 
     const filter = name + "%";
 
     try {
-        const users = await userRepository.getUsersByName(filter);
+        const users = await userRepository.getUsersByNameOrderedByFollowing(userId, filter);
+
         if (users.length === 0) {
             res.sendStatus(404);
             return;
