@@ -208,7 +208,8 @@ export async function getPostCommentsRepository(userId, postId) {
         FROM "comments" c
         JOIN "users" u ON c."userId" = u.id
         JOIN "posts" p ON c."postId" = p.id
-        WHERE c."postId" = $2`,
+        WHERE c."postId" = $2
+        ORDER BY c."createdAt" DESC`,
         [userId, postId]
     );
 
