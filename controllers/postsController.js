@@ -17,11 +17,11 @@ export async function deletePost(req, res) {
     const { postId } = req.params;
     const { userId } = res.locals.tokenData;
 
-    try {
-        if (!postId || isNaN(postId)) {
-            return res.sendStatus(422);
-        }
+    if (!postId || isNaN(postId)) {
+        return res.sendStatus(422);
+    }
 
+    try {
         const checkPost = await getPostById(postId);
         if (checkPost.length < 1)
             return res.status(404).send("Post does not exist");
@@ -43,11 +43,11 @@ export async function updatePost(req, res) {
     const { newText } = req.body;
     const { userId } = res.locals.tokenData;
 
-    try {
-        if (!postId || isNaN(postId)) {
-            return res.sendStatus(422);
-        }
+    if (!postId || isNaN(postId)) {
+        return res.sendStatus(422);
+    }
 
+    try {
         const checkPost = await getPostById(postId);
         console.log(checkPost);
         if (checkPost.length < 1)
@@ -68,7 +68,7 @@ export async function updatePost(req, res) {
 
 export async function repost(req, res) {
     const { userId } = res.locals.tokenData;
-    const {postId} = req.body;
+    const { postId } = req.body;
 
     try {
         await sendRepost(userId, postId);
@@ -99,32 +99,34 @@ export async function handleLike(req, res) {
     }
 }
 
-export async function commentOnPost( req, res ) {
+export async function commentOnPost(req, res) {
     try {
         const { userId } = res.locals.tokenData;
         const { postId, commentText } = res.locals.commentData;
 
-        const comments = await commentOnPostRepository( postId, userId, commentText );
+        const comments = await commentOnPostRepository(
+            postId,
+            userId,
+            commentText
+        );
 
-        res.status( 200 ).send( comments );
-
-    } catch ( e ) {
-        console.log( e );
-        res.sendStatus( 500 );
+        res.status(200).send(comments);
+    } catch (e) {
+        console.log(e);
+        res.sendStatus(500);
     }
 }
 
-export async function getPostComments( req, res ) {
+export async function getPostComments(req, res) {
     try {
         const { postId } = res.locals.commentData;
         const { userId } = res.locals.tokenData;
 
-        const comments = await getPostCommentsRepository( userId, postId );
+        const comments = await getPostCommentsRepository(userId, postId);
 
-        res.status( 200 ).send( comments );
-
-    } catch ( e ) {
-        console.log( e );
-        res.sendStatus( 500 );
+        res.status(200).send(comments);
+    } catch (e) {
+        console.log(e);
+        res.sendStatus(500);
     }
 }

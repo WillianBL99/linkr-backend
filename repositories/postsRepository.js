@@ -13,8 +13,7 @@ export async function postDeleter(postId) {
     await db.query(`UPDATE "posts" SET "statusId" = 3 WHERE id = $1`, [postId]);
 }
 
-export async function getPostsByFilter( filter, limit ) {
-    //TODO: ver questão de limit=null
+export async function getPostsByFilter(filter, limit) {
     const limiter = limit;
     const posts = await db.query(
         `SELECT 
@@ -37,12 +36,12 @@ export async function getPostsByFilter( filter, limit ) {
         JOIN links l ON p."linkId" = l.id
         ${filter}
         ORDER BY p."createdAt" DESC
-        LIMIT ${ limiter }`
+        LIMIT ${limiter}`
     );
     return posts.rows;
 }
 
-export async function getNumberOfPosts( filter ) {
+export async function getNumberOfPosts(filter) {
     //TODO: ver questão de limit=null
     const posts = await db.query(
         `SELECT COUNT (*)  
@@ -53,7 +52,7 @@ export async function getNumberOfPosts( filter ) {
         JOIN  posts p ON u.id = p."userId"
         JOIN "postStatus" s ON p."statusId" = s.id
         JOIN links l ON p."linkId" = l.id
-        ${ filter }
+        ${filter}
         `
     );
     return posts.rows;
@@ -74,7 +73,7 @@ export async function getRepostsByFilter(filter, limit) {
     for (let i = 0; i < reposts.length; i++) {
         const postId = reposts[i].postId;
         const filter = `WHERE p.id = ${postId} AND s.id != 3`;
-        
+
         const post = await getPostsByFilter(filter, limit);
 
         if (post.length > 0) {
@@ -84,47 +83,46 @@ export async function getRepostsByFilter(filter, limit) {
                     userId: reposts[i].userId,
                     userName: reposts[i].name,
                 },
-                createdAt: reposts[i].createdAt,}
-            );
+                createdAt: reposts[i].createdAt,
+            });
         }
     }
 
     return repostsInfo;
 }
 
-export async function getAllPostsFromUsersFollowed( userId, limit ) {
+export async function getAllPostsFromUsersFollowed(userId, limit) {
     const FILTER = `
         WHERE s.id != 3
-        AND f."followerId" = ${sqlstring.escape( userId )}
+        AND f."followerId" = ${sqlstring.escape(userId)}
     `;
     const posts = await getPostsByFilter(FILTER, limit);
     const reposts = await getRepostsByFilter(FILTER, limit);
-    if(reposts.length > 0){
-        for(let i = 0; i < reposts.length; i++) {
+    if (reposts.length > 0) {
+        for (let i = 0; i < reposts.length; i++) {
             posts.push(reposts[i]);
         }
     }
 
-    return posts
+    return posts;
 }
 
 export async function getNumberPostsTimeLine(userId) {
     const FILTER = `
         WHERE s.id != 3
-        AND f."followerId" = ${ userId }
+        AND f."followerId" = ${userId}
     `;
 
-    return await getNumberOfPosts( FILTER );
+    return await getNumberOfPosts(FILTER);
 }
 
-
-export async function getAllPostByUser(id, limit ){
+export async function getAllPostByUser(id, limit) {
     const FILTER = `WHERE u.id = ${SqlString.escape(id)} AND p."statusId" != 3`;
     const posts = await getPostsByFilter(FILTER, limit);
 
     const reposts = await getRepostsByFilter(FILTER, limit);
-    if(reposts.length > 0){
-        for(let i = 0; i < reposts.length; i++) {
+    if (reposts.length > 0) {
+        for (let i = 0; i < reposts.length; i++) {
             posts.push(reposts[i]);
         }
     }
@@ -140,9 +138,6 @@ export async function getPostById(postId) {
 
     return post;
 }
-
-
-
 
 export async function postUpdate(postId, newText) {
     await db.query(
@@ -181,17 +176,17 @@ export async function infoRepost(postId) {
     return reposts;
 }
 
-export async function commentOnPostRepository( postId, userId, commentText ) {
+export async function commentOnPostRepository(postId, userId, commentText) {
     await db.query(
         `INSERT INTO "comments" ("postId", "userId", "text")
         VALUES ($1, $2, $3)`,
-        [ postId, userId, commentText ]
+        [postId, userId, commentText]
     );
 
-    return await getPostCommentsRepository( userId, postId );
+    return await getPostCommentsRepository(userId, postId);
 }
 
-export async function getPostCommentsRepository( userId, postId ) {
+export async function getPostCommentsRepository(userId, postId) {
     const { rows: comments } = await db.query(
         `SELECT 
             u.id,
@@ -210,7 +205,7 @@ export async function getPostCommentsRepository( userId, postId ) {
         JOIN "users" u ON c."userId" = u.id
         JOIN "posts" p ON c."postId" = p.id
         WHERE c."postId" = $2`,
-        [ userId, postId ]
+        [userId, postId]
     );
 
     return comments;

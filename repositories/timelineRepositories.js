@@ -1,84 +1,102 @@
 import db from "../config/db.js";
 
 export async function postOnTimelineRepository(userId, linkId, post) {
-  const { postBody } = post;
-  const body = postBody === '' ? null : postBody;
+    const { postBody } = post;
+    const body = postBody === "" ? null : postBody;
 
-  const {rows: [{id}]} = await db.query(`
+    const {
+        rows: [{ id }],
+    } = await db.query(
+        `
     INSERT INTO posts ("userId", "postBody", "linkId")
     VALUES ($1, $2, $3)
     RETURNING id
-  `, [userId, body, linkId]);
-  
-  return id;
+  `,
+        [userId, body, linkId]
+    );
+
+    return id;
 }
 
 export async function getHashtagByName(name) {
-  const hashtagQuery = await db.query(`
+    const hashtagQuery = await db.query(
+        `
     SELECT id
     FROM hashtags
     WHERE name = $1
-  `, [name]);
+  `,
+        [name]
+    );
 
-  return hashtagQuery.rows[0] ? hashtagQuery.rows[0].id : undefined;
+    return hashtagQuery.rows[0] ? hashtagQuery.rows[0].id : undefined;
 }
 
 export async function createHashtag(name) {
-  const { rows: [{id}] } = await db.query(`
+    const {
+        rows: [{ id }],
+    } = await db.query(
+        `
     INSERT INTO hashtags (name)
     VALUES ($1)
     RETURNING id
-  `, [name]);
+  `,
+        [name]
+    );
 
-  return id;
+    return id;
 }
 
 export async function insertHashtagsPost(hashtagsValues) {
-  await db.query(`
+    await db.query(`
     INSERT INTO "hashtagsPosts" ("postId", "hashtagId")
     VALUES ${hashtagsValues}
   `);
 }
 
 export async function likeRepository(userId, postId) {
-  await db.query(
-    `INSERT INTO "likesPosts" ("userId", "postId")
+    await db.query(
+        `INSERT INTO "likesPosts" ("userId", "postId")
     VALUES ($1, $2)
-    `,[userId, postId]
-  );
+    `,
+        [userId, postId]
+    );
 }
 
 export async function unlinkeRepository(userId, postId) {
-  await db.query(
-    `DELETE FROM "likesPosts"
+    await db.query(
+        `DELETE FROM "likesPosts"
     WHERE "userId" = $1 AND "postId" = $2
-    `,[userId, postId]
-  );
+    `,
+        [userId, postId]
+    );
 }
 
 export async function verifyLikeRepository(userId, postId) {
-  const { rows: liked } = await db.query(
-    `SELECT * FROM "likesPosts"
+    const { rows: liked } = await db.query(
+        `SELECT * FROM "likesPosts"
     WHERE "userId" = $1 AND "postId" = $2
-    `,[userId, postId]
-  );
+    `,
+        [userId, postId]
+    );
 
-  return liked.length > 0;
+    return liked.length > 0;
 }
 
-
 export async function infoLikes(userId, postId) {
-  const liked = await verifyLikeRepository(userId, postId);
+    const liked = await verifyLikeRepository(userId, postId);
 
-  const {rows: [{ likes }]} = await db.query(
-    `SELECT COUNT(*) AS "likes"
+    const {
+        rows: [{ likes }],
+    } = await db.query(
+        `SELECT COUNT(*) AS "likes"
      FROM "likesPosts"
      WHERE "postId" = $1
-    `, [postId]
-  );
+    `,
+        [postId]
+    );
 
-
-  const { rows: names } = await db.query(`
+    const { rows: names } = await db.query(
+        `
     SELECT u.name
     FROM "likesPosts" lp
     JOIN users u ON lp."userId" = u.id
@@ -86,24 +104,31 @@ export async function infoLikes(userId, postId) {
     ORDER BY lp.id DESC
     LIMIT 2
     
-  `, [postId, userId]);
+  `,
+        [postId, userId]
+    );
 
-  const namePeople = names.map(name => name.name);
+    const namePeople = names.map((name) => name.name);
 
-  return {
-    likes, 
-    liked,
-    namePeople
-  };
+    return {
+        likes,
+        liked,
+        namePeople,
+    };
 }
 
 export async function insertLink(link, metadata) {
-  const { title, description, image } = metadata;
-  const {rows : [{ id }]} = await db.query(`
+    const { title, description, image } = metadata;
+    const {
+        rows: [{ id }],
+    } = await db.query(
+        `
     INSERT INTO links (link, title, description, image)
     VALUES ($1, $2, $3, $4)
     RETURNING id
-  `, [link, title, description, image]);
+  `,
+        [link, title, description, image]
+    );
 
-  return id;
+    return id;
 }

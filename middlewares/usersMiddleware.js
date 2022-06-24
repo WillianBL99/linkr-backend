@@ -37,6 +37,11 @@ export async function followUserMiddleware(req, res, next) {
 
 export async function validateUserMiddleware(req, res, next) {
     const id = parseInt(req.params.id);
+
+    if (!id || isNaN(id)) {
+        res.sendStatus(422);
+        return;
+    }
     try {
         const user = await getUserById(id);
 
