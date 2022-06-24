@@ -1,6 +1,7 @@
 import userRepository, { followUserRepository, getConnectionFollow, unfollowUserRepository } from "./../repositories/userRepositories.js";
 import { getAllPostByUser, getPostsByFilter, getNumberOfPosts } from "../repositories/postsRepository.js";
 import handlePostsData from "../utils/handlePostsData.js";
+import SqlString from "sqlstring";
 
 export async function getUserPosts(req, res) {
     const id = parseInt(req.params.id);
