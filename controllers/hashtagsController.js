@@ -36,8 +36,10 @@ export async function getHashtagPosts(req, res) {
     JOIN "hashtagsPosts" hp ON p.id=hp."postId"
     JOIN hashtags h ON hp."hashtagId"=h.id
     WHERE h.name = ${SqlString.escape(hashtag)} AND "statusId" <> 3`;
+
+    const from = `FROM users u`;
     try {
-        const postRows = await getPostsByFilter(filter, limit);
+        const postRows = await getPostsByFilter(from, filter, limit);
         const posts = await handlePostsData(userId, postRows);
 
         res.status(200).send(posts);

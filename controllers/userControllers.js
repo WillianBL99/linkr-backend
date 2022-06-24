@@ -16,7 +16,6 @@ export async function getUserPosts(req, res) {
     const { posts, limit } = req.query;
     const { userId } = res.locals.tokenData;
     const user = res.locals.user;
-    console.log(id);
 
     try {
         const connection = await getConnectionFollow(id, userId);
