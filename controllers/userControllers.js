@@ -1,5 +1,5 @@
 import userRepository, { followUserRepository, getConnectionFollow, unfollowUserRepository } from "./../repositories/userRepositories.js";
-import { getAllPostByUser, getPostsByFilter } from "../repositories/postsRepository.js";
+import { getAllPostByUser, getPostsByFilter, getNumberOfPosts } from "../repositories/postsRepository.js";
 import handlePostsData from "../utils/handlePostsData.js";
 
 export async function getUserPosts(req, res) {
@@ -62,5 +62,17 @@ export async function followUser( req, res ) {
     } catch (e) {
         console.log('Error in followUser', e);
         res.sendStatus(500);
+    }
+}
+
+export async function getNumberPostsUser(req, res) {
+    const id = parseInt(req.params.id);
+    try{
+        const filter = `WHERE "userId" = ${SqlString.escape(id)} AND "statusId" <> 3`;
+        const numberOfPosts = await getNumberOfPosts(filter);
+        res.status(200).send(numberOfPosts[0]);
+    } catch (e) {
+        console.log("Error getting number of posts user id", e);
+        res.sendStatus(500);    
     }
 }
