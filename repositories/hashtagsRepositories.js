@@ -11,4 +11,4 @@ export async function getHashtagsRepository() {
         ORDER BY count desc limit 10
     `);
     return hashtags.rows;
-};
+}

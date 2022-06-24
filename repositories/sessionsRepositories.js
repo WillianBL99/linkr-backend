@@ -1,7 +1,8 @@
 import db from "../config/db.js";
 
 async function createSessions(userId, token) {
-    return db.query(`
+    return db.query(
+        `
         INSERT
         INTO sessions ("userId", token)
         VALUES ($1, $2);`,
@@ -10,17 +11,18 @@ async function createSessions(userId, token) {
 }
 
 export async function getSession(token) {
-    return db.query(`
+    return db.query(
+        `
     SELECT *
     FROM sessions
     WHERE token =$1`,
-    [token]
+        [token]
     );
 }
 
 const sessionsRepository = {
     createSessions,
-    getSession
-}
+    getSession,
+};
 
 export default sessionsRepository;
