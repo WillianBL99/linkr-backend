@@ -1,3 +1,4 @@
+import sqlstring from "sqlstring";
 import SqlString from "sqlstring";
 import db from "./../config/db.js";
 
@@ -57,7 +58,7 @@ export async function getNumberOfPosts( filter ) {
     );
     return posts.rows;
 }
-export async function getRepostsByFilter(filter) {
+export async function getRepostsByFilter(filter, limit) {
     const repostsResult = await db.query(
         `SELECT sp."userId", sp."createdAt", sp."postId", u.id, u.name 
         FROM followers f
@@ -73,7 +74,8 @@ export async function getRepostsByFilter(filter) {
     for (let i = 0; i < reposts.length; i++) {
         const postId = reposts[i].postId;
         const filter = `WHERE p.id = ${postId} AND s.id != 3`;
-        const post = await getPostsByFilter(filter);
+        
+        const post = await getPostsByFilter(filter, limit);
 
         if (post.length > 0) {
             repostsInfo.push({
@@ -93,11 +95,10 @@ export async function getRepostsByFilter(filter) {
 export async function getAllPostsFromUsersFollowed( userId, limit ) {
     const FILTER = `
         WHERE s.id != 3
-        AND f."followerId" = ${ userId }
+        AND f."followerId" = ${sqlstring.escape( userId )}
     `;
-
     const posts = await getPostsByFilter(FILTER, limit);
-    const reposts = await getRepostsByFilter(FILTER);
+    const reposts = await getRepostsByFilter(FILTER, limit);
     if(reposts.length > 0){
         for(let i = 0; i < reposts.length; i++) {
             posts.push(reposts[i]);
@@ -117,10 +118,10 @@ export async function getNumberPostsTimeLine(userId) {
 }
 
 
-export async function getAllPostByUser(id){
+export async function getAllPostByUser(id, limit ){
     const FILTER = `WHERE u.id = ${SqlString.escape(id)} AND p."statusId" != 3`;
 
-    const posts = await getPostsByFilter(FILTER);
+    const posts = await getPostsByFilter(FILTER, limit );
     const reposts = await getRepostsByFilter(FILTER);
     if(reposts.length > 0){
         for(let i = 0; i < reposts.length; i++) {
