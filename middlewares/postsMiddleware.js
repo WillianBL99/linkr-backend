@@ -26,7 +26,7 @@ export async function handleLikeMiddleware(req, res, next) {
   }
 }
 
-export async function commentOnPostMiddleware( req, res, next ) {
+export async function getAndPostCommentsMiddleware( req, res, next ) {
   try {
     const { commentText } = req.body;
     const postId = parseInt( req.params.postId );
@@ -39,6 +39,8 @@ export async function commentOnPostMiddleware( req, res, next ) {
     if( !post ) {
         return res.sendStatus( 404 );
     }
+
+
 
     res.locals.commentData = { commentText, postId };
     next();

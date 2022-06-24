@@ -10,9 +10,10 @@ import {
     handleLike,
     updatePost,
     commentOnPost,
+    getPostComments,
 } from "../controllers/postsController.js";
 import repostSchema from "../schemas/repostSchema.js";
-import { commentOnPostMiddleware, handleLikeMiddleware } from "../middlewares/postsMiddleware.js";
+import { getAndPostCommentsMiddleware, handleLikeMiddleware } from "../middlewares/postsMiddleware.js";
 import { commentSchema } from "../schemas/postSchemas.js";
 
 const postsRouter = Router();
@@ -26,8 +27,9 @@ postsRouter.post("/posts/:id/like", handleLikeMiddleware, handleLike);
 postsRouter.post(
     "/posts/:postId/comment", 
     validateSchema( commentSchema ), 
-    commentOnPostMiddleware,
+    getAndPostCommentsMiddleware,
     commentOnPost
 );
+postsRouter.get("/posts/:postId/comments",getAndPostCommentsMiddleware, getPostComments);
 
 export default postsRouter;

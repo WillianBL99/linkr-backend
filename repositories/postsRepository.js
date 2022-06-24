@@ -188,10 +188,10 @@ export async function commentOnPostRepository( postId, userId, commentText ) {
         [ postId, userId, commentText ]
     );
 
-    return await getCommentsByPostId( userId, postId );
+    return await getPostCommentsRepository( userId, postId );
 }
 
-export async function getCommentsByPostId( userId, postId ) {
+export async function getPostCommentsRepository( userId, postId ) {
     const { rows: comments } = await db.query(
         `SELECT 
             u.id,

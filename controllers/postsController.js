@@ -4,6 +4,7 @@ import {
     getPostById,
     sendRepost,
     commentOnPostRepository,
+    getPostCommentsRepository,
 } from "../repositories/postsRepository.js";
 import {
     infoLikes,
@@ -104,6 +105,21 @@ export async function commentOnPost( req, res ) {
         const { postId, commentText } = res.locals.commentData;
 
         const comments = await commentOnPostRepository( postId, userId, commentText );
+
+        res.status( 200 ).send( comments );
+
+    } catch ( e ) {
+        console.log( e );
+        res.sendStatus( 500 );
+    }
+}
+
+export async function getPostComments( req, res ) {
+    try {
+        const { postId } = res.locals.commentData;
+        const { userId } = res.locals.tokenData;
+
+        const comments = await getPostCommentsRepository( userId, postId );
 
         res.status( 200 ).send( comments );
 
