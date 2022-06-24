@@ -95,3 +95,21 @@ export async function handleLike(req, res) {
         res.sendStatus(500);
     }
 }
+
+export async function commentOnPost( req, res ) {
+    try {
+        const { userId } = res.locals.postBody;
+        const { postId } = req.params;
+
+        const [ post ] = getPostById( postId );
+        if( !post ) {
+            res.sendStatus( 404 );
+        }
+
+        
+
+    } catch ( e ) {
+        console.log( e );
+        res.sendStatus( 500 );
+    }
+}

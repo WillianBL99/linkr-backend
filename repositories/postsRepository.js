@@ -37,10 +37,10 @@ export async function getPostsByFilter( filter ) {
     return posts.rows;
 }
 
-export async function getAllPostByUserLoggedAndFollowed() {
+export async function getAllPostByUserLoggedAndFollowed( userId ) {
     const FILTER = `
         WHERE s.id != 3
-        AND f."followedId" IS NOT NULL
+        AND f."followerId" = ${ userId }
     `;
 
     return await getPostsByFilter( FILTER );
@@ -89,4 +89,20 @@ export async function infoRepost(postId){
         reposts = repostResult.rows[0].reposts;
     }
     return reposts;
+}
+
+export async function commentOnPostRepository( postId, userId, commentText ) {
+    await db.query(
+        `INSERT INTO "comments" ("postId", "userId", "text")
+        VALUES ($1, $2, $3)`,
+        [ postId, userId, commentText ]
+    );
+
+    return getCommentsByPostId( postId );
+}
+
+export async function getCommentsByPostId( postId ) {
+    const { rows: comments } = await db.query(
+        `SELECT u.name`
+    )
 }

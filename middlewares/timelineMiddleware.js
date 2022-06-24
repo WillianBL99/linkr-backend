@@ -6,7 +6,7 @@ import getMetadataUrl from "../utils/getMetadataUrl.js";
 export async function getTimelineMiddleware(req, res, next) {
   try {
     const { userId } = res.locals.tokenData;
-    const timeline = await getAllPostByUserLoggedAndFollowed( );
+    const timeline = await getAllPostByUserLoggedAndFollowed( userId );
 
     if(!timeline.length) {
       const connections = await getConnectionsFollow( userId );
